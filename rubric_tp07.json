@@ -1,0 +1,88 @@
+{
+  "tp_metadata": {
+    "tp_id": "SOII-2026-TP7",
+    "title": "TP N° 7: Coordinación Distribuida",
+    "catedra": "Sistemas Operativos II - UNJu Facultad de Ingeniería",
+    "version": "1.0.0"
+  },
+  "max_score": 100,
+  "exercises": {
+    "seccion1_lamport_estados": {
+      "title": "Sección 1: Estados Globales, Instantáneas y Relojes Lógicos de Lamport",
+      "weight": 16,
+      "feedback": "Consultar Diapositivas Unidad 7 (Slides 3-11), Silberschatz Cap. 18 y Tanenbaum Cap. 6 sobre Estados Globales y Relojes Lógicos de Lamport.",
+      "hashes": {
+        "q1_estado_global_dificultad": "5c33229e844d872fba6d571e60f48cbb28b08638c235c90c30839b9f91e5093e",
+        "q2_ejemplo_banco_inconsistencia": "32f9aa8da9fab72442d53e0654f87efc38a52f3dce064f812ff465bce29d1363",
+        "q3_regla_emisor_lamport": "37d1297f7dd9ef37c0eb9d4357ca2d55cbb23e07df2ea2ccc8a1b8312ca37ee6",
+        "q4_regla_receptor_lamport": "022a10c3cab4c3c0b449c95b1feaa9c21b82061ab256d25ac72cd5d2137a06ce",
+        "q5_ordenacion_total_desempate": "4a6677cf128deb54dad806adcd54dd22773098de879217395ecd66817782c96b"
+      }
+    },
+    "seccion2_exclusion_mutua": {
+      "title": "Sección 2: Algoritmos de Exclusión Mutua Distribuida",
+      "weight": 16,
+      "feedback": "Consultar Diapositivas Unidad 7 (Slides 12-22), Silberschatz Cap. 18 y Carretero Cap. 11 sobre Algoritmos de Exclusión Mutua Distribuida.",
+      "hashes": {
+        "q1_centralizado_spof": "4adcf4c3c9a155dcac2981da36c65a7df309a918465797ff0161ddc531b4b161",
+        "q2_ricart_agrawala_mensajes": "62972af8213958a402d9f267d1405855967a8a18bf98bfd0bb69bf659a7dde0a",
+        "q3_ricart_criterio_postergacion": "2e135c5c0c2956d8a1783f82d80a0f47460a367fe6dd959b36f033ba43f4ea28",
+        "q4_token_anillo_ventaja": "4094c49d2bef179239dcce2a409f1ea4832a6a59ac1e3516d3aa8c14915dcbc7",
+        "q5_token_perdida_vulnerabilidad": "3f599a9d06c574f5909215c3cff04c993ef8a7f4113be6b03f4a572ab8f597b6"
+      }
+    },
+    "seccion3_interbloqueo_prevencion": {
+      "title": "Sección 3: Matriz de Interbloqueo Distribuido y Prevención Wait-Die / Wound-Wait",
+      "weight": 18,
+      "feedback": "Consultar Diapositivas Unidad 7 (Slides 23-29), Silberschatz Cap. 18 y Tanenbaum Cap. 6 sobre Interbloqueo Fantasma, Chandy-Misra-Haas y Esquemas Wait-Die / Wound-Wait.",
+      "hashes": {
+        "sw1_interbloqueo_fantasma": "418d61c0acf649d46b0e59f42c25e362172efc23a80fb84b23c70b7e7c1f005a",
+        "sw2_sondas_chandy_misra": "8ba20f527bb17fd1625f194b4a31366ac1e9c174a3ed0face3664c99df6029c7",
+        "sw3_wait_die_viejo_pide_joven": "166ef2310af1ea36ad1edf4db06f4c1371b7f35208a4be895c818925aa70db89",
+        "sw4_wait_die_joven_pide_viejo": "49b8a1a1921e60dbd64eb75e3aa180b47e074f12855b72ea2a96b353c31a305a",
+        "sw5_wound_wait_viejo_pide_joven": "f55a79760d6906b96652cdd6e22bfe2d4924cec65ad3003305b6e397cf3fcfcb",
+        "sw6_wound_wait_joven_pide_viejo": "e927fb8a4c88bb8b8ca860f3d0e2a70622327578c4e6b0f4770a68258f634396"
+      }
+    },
+    "seccion4_algoritmos_eleccion": {
+      "title": "Sección 4: Laboratorio Interactivo de Algoritmos de Elección (Bully y Anillo)",
+      "weight": 16,
+      "feedback": "Consultar Diapositivas Unidad 7 (Slides 30-36), Silberschatz Cap. 18 y Tanenbaum Cap. 6 sobre Algoritmo de Imposición (Bully) y Algoritmo del Anillo.",
+      "hashes": {
+        "sim_bully_deteccion_timeout": "fd666be155f34cea117f138c5e2e4774bc52cbcc7f8a99834cf32118947d9fb6",
+        "sim_bully_quien_recibe_eleccion": "a90da08b5750e30f7f2b421f4afe37e3c8cebd88bb594190d153196eec809a86",
+        "sim_bully_regreso_nodo_alto": "ea4a35b3d8c986f0f62fbb9d4f384c168aaffac76830c8edc7c2c0f0b214c212",
+        "sim_anillo_criterio_ganador": "db4853c0c69c080b4344967cdb83c819a9357badc71c39e7c3abf753bbff03b2"
+      }
+    },
+    "seccion5_secuencia_algoritmos": {
+      "title": "Sección 5: Secuencia Operativa del Algoritmo de Elección Bully (El Matón)",
+      "weight": 16,
+      "feedback": "Consultar Diapositivas Unidad 7 (Slides 32-34) y Tanenbaum Cap. 6 sobre la secuencia canónica del Algoritmo Bully (García-Molina).",
+      "type": "ordered_list",
+      "list_key": "orden_algoritmo_bully",
+      "hashes": {
+        "items": [
+          "6de08a334d699d7017b8fc39ecb52b61e5d03368b8089f40b1244ea6b594f6fd",
+          "f871627035c36fa0381dacaf6466cdbf300f18c5ee06777cfe1e061c5c1f8816",
+          "31793c7a26a471593e37b7c840da49ccd88c2f46c29e221c8b20e3156d88d6b3",
+          "0e155915c4cb30ae76de64de3ae21cb5f9f8cdff4a0cff5e85164acee2ce7d64",
+          "4cd819b989aec7b18cdf64f316eb85839b9d08776b2ac9151796286213b6599d",
+          "fd81a80ff9b225145d72787ce982e4354d647cb89fcc4d0a053d9d6b9f517272"
+        ]
+      }
+    },
+    "seccion6_consenso_bizantino": {
+      "title": "Sección 6: Consenso Distribuido y Problema de los Generales Bizantinos",
+      "weight": 18,
+      "feedback": "Consultar Diapositivas Unidad 7 (Slides 37-44), Lamport (1982) y Stallings Cap. 14 sobre Consenso, el Problema de los Generales Bizantinos y algoritmos OM(m) / SM(m).",
+      "hashes": {
+        "q1_fallas_bizantinas_caracteristica": "14d2fe38d9c1312a83ea32ee4742214bda9898912e88634240c20adf94dbf45f",
+        "q2_condicion_ic1_acuerdo": "8f0775bff652316d5f3593e7ebbffaf57d7b80256fcdf61e6366b66292f967b3",
+        "q3_condicion_ic2_validez": "a53a866d1a3f041cf69ab812f205147a466d99df325bd4cd08adf616e9f1dc50",
+        "q4_mensajes_orales_limite_m1": "d5ecdb6eedb4f90e2a73350466966bc877c7e4d0bf21652a33c131aa81e75451",
+        "q5_mensajes_firmados_limite_m1": "3d26b0a0940fa79d740f7d92d7c9048062f3f5ebd20c39a5af05195c45b1dd7e"
+      }
+    }
+  }
+}

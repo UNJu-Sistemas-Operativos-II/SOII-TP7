@@ -1,0 +1,20 @@
+# Claves maestras privadas docentes (Zero-Knowledge - NUNCA en repo público/alumno)
+*_master.json
+
+# Caches y temporales de Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# Temporales de sistema y editores
+.DS_Store
+Thumbs.db
+*.swp
+*.tmp
+*~
+
+# Entornos virtuales
+.venv/
+env/
+venv/

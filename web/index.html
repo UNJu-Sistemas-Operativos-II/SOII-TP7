@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UNJu SO II - TP N° 7: Coordinación Distribuida</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <!-- SortableJS para Drag & Drop táctil -->
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+</head>
+<body>
+    <div class="bg-glow"></div>
+
+    <!-- Sticky Toolbar Superior Fija -->
+    <header class="sticky-toolbar">
+        <div class="toolbar-brand">
+            <span class="toolbar-logo">🌐</span>
+            <span class="toolbar-title">UNJu SO II — TP N° 7: Coordinación Distribuida</span>
+        </div>
+        <div class="toolbar-progress">
+            <div class="progress-track">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+            <span class="progress-label" id="progress-label">0% (0/31)</span>
+        </div>
+        <div class="toolbar-actions">
+            <button class="btn btn-icon" id="btn-theme-toggle" title="Alternar Modo Claro / Oscuro">🌓</button>
+            <button class="btn btn-outline" id="btn-import-json" title="Cargar respuestas guardadas">📂 Cargar</button>
+            <input type="file" id="file-import-input" accept=".json" style="display: none;">
+            <button class="btn btn-primary" id="btn-download-json" disabled title="Debe completar los 31 ítems académicos y sus datos personales para descargar">
+                📥 Descargar respuestas_tp07.json
+            </button>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Header Hero -->
+        <section class="header-hero">
+            <div class="header-meta">
+                <div class="badge-group">
+                    <span class="badge-tag blue">UNJu — Facultad de Ingeniería</span>
+                    <span class="badge-tag purple">Sistemas Operativos II — 2026</span>
+                    <span class="badge-tag emerald">Cátedra Vázquez — Argañaraz</span>
+                </div>
+                <span class="badge-tag amber">Unidad 7: Coordinación y Consenso</span>
+            </div>
+            <h1>Laboratorio Interactivo de Coordinación Distribuida</h1>
+            <p>
+                Plataforma interactiva de experimentación práctica y autoevaluación criptográfica para la Unidad 7. Experimente con los simuladores interactivos de Relojes Lógicos de Lamport, prevención de interbloqueos (Wait-Die vs. Wound-Wait), algoritmos de elección de líder (Bully vs. Anillo) y cálculo de tolerancia a fallas en el Problema de los Generales Bizantinos. Complete las 6 secciones académicas (31 ítems) para generar su archivo de entrega <code>respuestas_tp07.json</code>.
+            </p>
+        </section>
+
+        <!-- Datos del Alumno -->
+        <section class="glass-card" id="card-alumno">
+            <h2 class="section-title">👤 Datos del Estudiante</h2>
+            <p class="section-desc">Ingrese sus datos identificatorios. Son validados para autorizar la exportación del archivo pero no incrementan el contador académico.</p>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="alumno-nombre">Apellido y Nombre *</label>
+                    <input type="text" id="alumno-nombre" class="form-control" placeholder="Ej. Gómez, Lucas Matías" required>
+                </div>
+                <div class="form-group">
+                    <label for="alumno-legajo">Número de Legajo (L.U.) *</label>
+                    <input type="text" id="alumno-legajo" class="form-control" placeholder="Ej. 18240" required>
+                </div>
+                <div class="form-group">
+                    <label for="alumno-github">Usuario de GitHub *</label>
+                    <input type="text" id="alumno-github" class="form-control" placeholder="Ej. lgomez-unju" required>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 1: Estados Globales y Relojes de Lamport -->
+        <section class="glass-card" id="seccion-1">
+            <h2 class="section-title">1️⃣ Estados Globales y Relojes Lógicos de Lamport</h2>
+            <p class="section-desc">Analice la ausencia de estado global instantáneo y las reglas formales de ordenación temporal de Lamport.</p>
+
+            <details class="biblio-panel">
+                <summary class="biblio-summary">📖 Dónde estudiar este tema en la bibliografía</summary>
+                <div class="biblio-content">
+                    Silberschatz, Galvin & Gagne (7ma Ed.): Capítulo 18 (Coordinación Distribuida, Secciones 18.1 a 18.2). Andrew S. Tanenbaum: Sistemas Distribuidos, Capítulo 6. Diapositivas de Cátedra: Unidad 7 (Diapositivas 3 a 11).
+                </div>
+            </details>
+
+            <!-- SIMULADOR 1: Relojes de Lamport -->
+            <div class="sim-container" style="margin-bottom: 2rem;">
+                <h3 style="font-size: 1.05rem; font-weight: 700; color: var(--primary);">⏱️ Simulador de Relojes Lógicos de Lamport (P1, P2, P3)</h3>
+                <p style="font-size: 0.85rem; color: var(--text-muted);">
+                    Ejecute sucesos locales (incrementa +1) o transmita mensajes entre nodos para observar la regla de recepción: <code>C_j &larr; 1 + max(C_j, T_i)</code>.
+                </p>
+                <div class="nodes-display-grid">
+                    <div class="node-card" id="sim-node-p1">
+                        <span style="font-weight: 700; font-size: 0.9rem;">Nodo P1</span>
+                        <div class="node-clock-badge" id="clock-p1">0</div>
+                        <button class="btn btn-outline" style="font-size: 0.75rem; padding: 0.3rem 0.5rem;" onclick="triggerLamportLocalEvent(1)">Evento Local (+1)</button>
+                        <button class="btn btn-outline" style="font-size: 0.75rem; padding: 0.3rem 0.5rem;" onclick="sendLamportMsg(1, 2)">Enviar a P2</button>
+                    </div>
+                    <div class="node-card" id="sim-node-p2">
+                        <span style="font-weight: 700; font-size: 0.9rem;">Nodo P2</span>
+                        <div class="node-clock-badge" id="clock-p2">0</div>
+                        <button class="btn btn-outline" style="font-size: 0.75rem; padding: 0.3rem 0.5rem;" onclick="triggerLamportLocalEvent(2)">Evento Local (+1)</button>
+                        <button class="btn btn-outline" style="font-size: 0.75rem; padding: 0.3rem 0.5rem;" onclick="sendLamportMsg(2, 3)">Enviar a P3</button>
+                    </div>
+                    <div class="node-card" id="sim-node-p3">
+                        <span style="font-weight: 700; font-size: 0.9rem;">Nodo P3</span>
+                        <div class="node-clock-badge" id="clock-p3">0</div>
+                        <button class="btn btn-outline" style="font-size: 0.75rem; padding: 0.3rem 0.5rem;" onclick="triggerLamportLocalEvent(3)">Evento Local (+1)</button>
+                        <button class="btn btn-outline" style="font-size: 0.75rem; padding: 0.3rem 0.5rem;" onclick="sendLamportMsg(3, 1)">Enviar a P1</button>
+                    </div>
+                </div>
+                <div class="sim-log-terminal" id="lamport-log">
+                    &gt; Simulador inicializado. Relojes lógicos C1=0, C2=0, C3=0.
+                </div>
+                <div style="display: flex; justify-content: flex-end;">
+                    <button class="btn btn-outline" style="font-size: 0.8rem;" onclick="resetLamportClocks()">🔄 Reiniciar Relojes</button>
+                </div>
+            </div>
+
+            <!-- Q1 -->
+            <div class="question-block" data-qid="q1_estado_global_dificultad">
+                <div class="question-header">1. ¿Por qué no existe un estado global accesible de manera instantánea y coherente en un sistema distribuido?</div>
+                <div class="radio-cards-grid">
+                    <label class="radio-card">
+                        <input type="radio" name="q1_estado_global_dificultad" value="TARJETAS_RED_DESCARTAN_PAQUETES">
+                        <span class="radio-letter">A)</span>
+                        <span class="radio-text">Porque los canales de red descartan paquetes cuando la memoria caché de las tarjetas de interfaz satura sus buffers locales.</span>
+                    </label>
+                    <label class="radio-card">
+                        <input type="radio" name="q1_estado_global_dificultad" value="AUSENCIA_MEMORIA_COMPARTIDA_Y_RETARDOS">
+                        <span class="radio-letter">B)</span>
+                        <span class="radio-text">Porque la ausencia de memoria compartida y los retardos de red implican que siempre pueden existir mensajes en tránsito no observados.</span>
+                    </label>
+                    <label class="radio-card">
+                        <input type="radio" name="q1_estado_global_dificultad" value="PROCESADORES_APAGAN_INTERFACES">
+                        <span class="radio-letter">C)</span>
+                        <span class="radio-text">Porque los procesadores anfitriones deben apagar periódicamente sus interfaces para evitar sobrecalentamiento en los conmutadores.</span>
+                    </label>
+                    <label class="radio-card">
+                        <input type="radio" name="q1_estado_global_dificultad" value="VFS_BLOQUEA_LECTURA_SIMULTANEA">
+                        <span class="radio-letter">D)</span>
+                        <span class="radio-text">Porque el sistema de archivos virtual VFS bloquea la lectura simultánea de descriptores entre máquinas geográficamente separadas.</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Q2 -->
+            <div class="question-block" data-qid="q2_ejemplo_banco_inconsistencia">
+                <div class="question-header">2. En el ejemplo de las transferencias bancarias entre sucursales presentado en cátedra, ¿qué genera lecturas discrepantes ($0 o $200)?</div>
+                <div class="radio-cards-grid">
+                    <label class="radio-card">
+                        <input type="radio" name="q2_ejemplo_banco_inconsistencia" value="MENSAJES_TRANSFERENCIA_EN_TRANSITO">
+                        <span class="radio-letter">A)</span>
+                        <span class="radio-text">La existencia de mensajes de transferencia en tránsito por la red durante el instante en que se capturan las fotos locales.</span>
+                    </label>
+                    <label class="radio-card">
+                        <input type="radio" name="q2_ejemplo_banco_inconsistencia" value="DUPLICACION_TRANSACCIONES_MEMORIA">
+                        <span class="radio-letter">B)</span>
+                        <span class="radio-text">La duplicación de transacciones en la memoria volátil de la base de datos debido a reinicios intempestivos del microprocesador.</span>
+                    </label>
+                    <label class="radio-card">
+                        <input type="radio" name="q2_ejemplo_banco_inconsistencia" value="ALGORITMOS_CRIPTOGRAFICOS_RETRASAN">
+                        <span class="radio-letter">C)</span>
+                        <span class="radio-text">La aplicación de algoritmos criptográficos que retrasan intencionalmente la actualización del saldo hasta el cierre contable diario.</span>
+                    </label>
+                    <label class="radio-card">
+                        <input type="radio" name="q2_ejemplo_banco_inconsistencia" value="FALTA_ESPACIO_DISCO_MASIVO">
+                        <span class="radio-letter">D)</span>
+                        <span class="radio-text">La falta de espacio en los discos de almacenamiento masivo que obliga a descartar las solicitudes de transferencia recibidas.</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Q3 -->
+            <div class="question-block" data-qid="q3_regla_emisor_lamport">
+                <div class="question-header">3. Al emitir un mensaje en el algoritmo de Lamport, ¿cómo actualiza su contador local el nodo emisor?</div>
+                <div class="radio-cards-grid">
+                    <label class="radio-card">
+                        <input type="radio" name="q3_regla_emisor_lamport" value="CALCULA_MEDIA_GEOMETRICA_MARCAS">
+                        <span class="radio-letter">A)</span>
+                        <span class="radio-text">Calcula la media geométrica de las marcas emitidas previamente y la envía como metadato dentro del encabezado del mensaje.</span>
+                    </label>
+                    <label class="radio-card">
+                        <input type="radio" name="q3_regla_emisor_lamport" value="INCREMENTA_CONTADOR_LOCAL_EN_UNO">
+                        <span class="radio-letter">B)</span>
+                        <span class="radio-text">Incrementa su contador local en una unidad antes de transmitir y adjunta el nuevo valor como marca de tiempo del mensaje.</span>
+                    </label>
+                    <label class="radio-card">
+                        <input type="radio" name="q3_regla_emisor_lamport" value="CONSULTA_SERVIDOR_NTP_ATOMIC">
+                        <span class="radio-letter">C)</span>
+                        <span class="radio-text">Consulta al servidor NTP de la red de área local para obtener la estampa atómica oficial antes de registrar el envío.</span>
+                    </label>
+                    <label class="radio-card">
+                        <input type="radio" name="q3_regla_emisor_lamport" value="CONSERVA_CONTADOR_INTERRUPCION">
+                        <span class="radio-letter">D)</span>
+                        <span class="radio-text">Conserva el contador sin modificaciones y programa una interrupción periódica para sincronizarlo al finalizar el segundo.</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Q4 -->
+            <div class="question-block" data-qid="q4_regla_receptor_lamport">
+                <div class="question-header">4. Al recibir un mensaje con marca Ti, ¿qué valor asigna el nodo receptor j a su contador local Cj?</div>
+                <div class="radio-cards-grid">
+                    <label class="radio-card">
+                        <input type="radio" name="q4_regla_receptor_lamport" value="ASIGNA_RELOJ_FISICO_CONMUTADOR">
+                        <span class="radio-letter">A)</span>
+                        <span class="radio-text">Asigna el valor del reloj físico del conmutador de red incrementado en un intervalo constante de transmisión estimada.</span>
+                    </label>
+                    <label class="radio-card">
+                        <input type="radio" name="q4_regla_receptor_lamport" value="UNO_MAS_MAXIMO_LOCAL_Y_ENTRANTE">
+                        <span class="radio-letter">B)</span>
+                        <span class="radio-text">Asigna una unidad más que el máximo entre su contador actual y la marca de tiempo entrante del mensaje.</span>
+                    </label>
+                    <label class="radio-card">
+                        <input type="radio" name="q4_regla_receptor_lamport" value="CONSERVA_INALTERADO_VALOR_LOCAL">
+                        <span class="radio-letter">C)</span>
+                        <span class="radio-text">Conserva inalterado su valor local si este supera a la marca recibida, ignorando por completo la estampa del mensaje.</span>
+                    </label>
+                    <label class="radio-card">
+                        <input type="radio" name="q4_regla_receptor_lamport" value="DIVIDE_SUMA_CONTADORES_NODOS">
+                        <span class="radio-letter">D)</span>
+                        <span class="radio-text">Divide la suma de ambos contadores entre el número total de nodos activos en el clúster para suavizar variaciones.</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Q5 -->
+            <div class="question-block" data-qid="q5_ordenacion_total_desempate">
+                <div class="question-header">5. En la ordenación total de Lamport, ¿cómo se desempata si dos mensajes distintos poseen exactamente la misma marca de tiempo (Ti = Tj)?</div>
+                <div class="radio-cards-grid">
+                    <label class="radio-card">
+                        <input type="radio" name="q5_ordenacion_total_desempate" value="PRIORIZA_LONGITUD_CARGA_UTIL">
+                        <span class="radio-letter">A)</span>
+                        <span class="radio-text">Se prioriza aquel mensaje cuyo contenido de carga útil posea una mayor longitud en bytes transmitidos por el socket.</span>
+                    </label>
+                    <label class="radio-card">
+                        <input type="radio" name="q5_ordenacion_total_desempate" value="SORTEO_PSEUDOALEATORIO_MAC">
+                        <span class="radio-letter">B)</span>
+                        <span class="radio-text">Se efectúa un sorteo pseudoaleatorio determinista empleando la dirección de hardware MAC del enrutador por defecto.</span>
+                    </label>
+                    <label class="radio-card">
+                        <input type="radio" name="q5_ordenacion_total_desempate" value="MENOR_MARCA_O_MENOR_ID_NODO">
+                        <span class="radio-letter">C)</span>
+                        <span class="radio-text">Se utiliza el identificador numérico único de los nodos, considerando que precede aquel con menor identificador (i &lt; j).</span>
+                    </label>
+                    <label class="radio-card">
+                        <input type="radio" name="q5_ordenacion_total_desempate" value="ANULAN_AMBAS_OPERACIONES_REINTENTO">
+                        <span class="radio-letter">D)</span>
+                        <span class="radio-text">Se anulan ambas operaciones y se solicita a las aplicaciones emisoras que reintenten el envío tras un retardo exponencial.</span>
+                    </label>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 2: Exclusión Mutua Distribuida -->
+        <section class="glass-card" id="seccion-2">
+            <h2 class="section-title">2️⃣ Algoritmos de Exclusión Mutua Distribuida</h2>
+            <p class="section-desc">Seleccione la característica o compromiso técnico que define a cada arquitectura de exclusión mutua.</p>
+
+            <details class="biblio-panel">
+                <summary class="biblio-summary">📖 Dónde estudiar este tema en la bibliografía</summary>
+                <div class="biblio-content">
+                    Silberschatz, Galvin & Gagne: Capítulo 18 (Sección 18.2). Carretero et al.: Capítulo 11 (Sistemas Distribuidos, Sección 11.3). Diapositivas de Cátedra: Unidad 7 (Diapositivas 12 a 22).
+                </div>
+            </details>
+
+            <div class="select-grid">
+                <!-- Select 1 -->
+                <div class="select-card" data-qid="q1_centralizado_spof">
+                    <div class="select-card-header">
+                        <span>1. Enfoque Centralizado:</span>
+                        <span style="font-size: 0.82rem; color: var(--text-muted);">¿Cuál es su desventaja arquitectónica más severa?</span>
+                    </div>
+                    <select class="select-box" id="select-q1_centralizado_spof">
+                        <option value="">-- Seleccione una opción evaluativa --</option>
+                        <option value="COORDINADOR_UNICO_PUNTO_FALLO">El coordinador constituye un punto único de fallo (SPOF) y un cuello de botella de rendimiento.</option>
+                        <option value="COMPLEJIDAD_POLITICA_FIFO">La dificultad matemática de garantizar una política de atención en orden de llegada (FIFO).</option>
+                        <option value="CONSUMO_EXCESIVO_MENSAJES">El requerimiento prohibitivo de transmitir más de diez mensajes por cada acceso solicitado.</option>
+                        <option value="INEXISTENCIA_PERMISOS">La imposibilidad de implementar colas de espera en la memoria del sistema operativo del nodo líder.</option>
+                    </select>
+                </div>
+
+                <!-- Select 2 -->
+                <div class="select-card" data-qid="q2_ricart_agrawala_mensajes">
+                    <div class="select-card-header">
+                        <span>2. Enfoque Distribuido (Ricart-Agrawala):</span>
+                        <span style="font-size: 0.82rem; color: var(--text-muted);">¿Cuántos mensajes totales genera por cada entrada a SC en un grupo de N nodos?</span>
+                    </div>
+                    <select class="select-box" id="select-q2_ricart_agrawala_mensajes">
+                        <option value="">-- Seleccione una opción evaluativa --</option>
+                        <option value="DOS_POR_N_MENOS_UNO">Exactamente 2(N - 1) mensajes (N - 1 peticiones en broadcast y N - 1 respuestas de confirmación).</option>
+                        <option value="TRES_POR_N_TOTALES">Exactamente 3N mensajes al requerir etapas de confirmación intermedia antes de liberar el recurso.</option>
+                        <option value="LOGARITMO_DE_N">Un orden logarítmico O(log N) mediante el reenlace dinámico de los canales de comunicación virtuales.</option>
+                        <option value="N_MENOS_UNO_TOTALES">Solamente N - 1 mensajes al suprimir completamente las respuestas de los nodos no competidores.</option>
+                    </select>
+                </div>
+
+                <!-- Select 3 -->
+                <div class="select-card" data-qid="q3_ricart_criterio_postergacion">
+                    <div class="select-card-header">
+                        <span>3. Protocolo de Ricart y Agrawala:</span>
+                        <span style="font-size: 0.82rem; color: var(--text-muted);">¿Cuándo decide un proceso Pj diferir (postergar) su mensaje de respuesta?</span>
+                    </div>
+                    <select class="select-box" id="select-q3_ricart_criterio_postergacion">
+                        <option value="">-- Seleccione una opción evaluativa --</option>
+                        <option value="PETICION_LOCAL_TIENE_MENOR_MARCA">Si Pj está en su SC o si está compitiendo y su propia petición posee una marca de tiempo menor que la de Pi.</option>
+                        <option value="CANAL_RED_SATURADO">Si los buffers del socket TCP reportan congestión temporal en el controlador de interfaz de red.</option>
+                        <option value="IDENTIFICADOR_MENOR">Si el identificador numérico de Pj es impar y el nodo emisor pertenece a una subred remota diferente.</option>
+                        <option value="DESCONOCIMIENTO_ESTADO">Si Pj todavía no ha recibido la notificación de inicio de sesión por parte del demonio de transporte.</option>
+                    </select>
+                </div>
+
+                <!-- Select 4 -->
+                <div class="select-card" data-qid="q4_token_anillo_ventaja">
+                    <div class="select-card-header">
+                        <span>4. Enfoque Basado en Token (Anillo):</span>
+                        <span style="font-size: 0.82rem; color: var(--text-muted);">¿Cuál es la principal ventaja operativa de este esquema?</span>
+                    </div>
+                    <select class="select-box" id="select-q4_token_anillo_ventaja">
+                        <option value="">-- Seleccione una opción evaluativa --</option>
+                        <option value="LIBRE_INANICION_CARGA_EQUITATIVA">Garantizan ausencia total de inanición al circular el testigo secuencialmente entre todos los nodos.</option>
+                        <option value="INMUNIDAD_CAIDA_NODOS">Siguen funcionando de manera transparente e ininterrumpida si cualquier nodo del anillo colapsa.</option>
+                        <option value="CERO_MENSAJES_TRAFICO">No generan ningún consumo de paquetes de red cuando ningún proceso demanda acceso al recurso crítico.</option>
+                        <option value="MULTIPLE_ENTRADA_CONCURRENTE">Permiten que dos o más procesos ingresen simultáneamente dividiendo el testigo en fracciones.</option>
+                    </select>
+                </div>
+
+                <!-- Select 5 -->
+                <div class="select-card" data-qid="q5_token_perdida_vulnerabilidad">
+                    <div class="select-card-header">
+                        <span>5. Vulnerabilidad Crítica del Token:</span>
+                        <span style="font-size: 0.82rem; color: var(--text-muted);">¿Qué consecuencia produce la pérdida física o lógica del testigo?</span>
+                    </div>
+                    <select class="select-box" id="select-q5_token_perdida_vulnerabilidad">
+                        <option value="">-- Seleccione una opción evaluativa --</option>
+                        <option value="BLOQUEO_HASTA_REGENERACION_ELECCION">El sistema se bloquea indefinidamente hasta que un algoritmo de elección detecte la pérdida y regenere el testigo.</option>
+                        <option value="DUPLICACION_AUTOMATICA">Los vecinos adyacentes generan de inmediato copias automáticas del testigo sin necesidad de coordinación.</option>
+                        <option value="ACCESO_LIBRE_SIN_CONTROL">Todos los procesos acceden concurrentemente al recurso asumiendo que la sección crítica quedó liberada.</option>
+                        <option value="MIGRACION_MEMORIA">El kernel transfiere automáticamente el estado del proceso averiado a la memoria de la estación más cercana.</option>
+                    </select>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 3: Interbloqueo Distribuido y Prevención (Switches) -->
+        <section class="glass-card" id="seccion-3">
+            <h2 class="section-title">3️⃣ Matriz de Interbloqueo Distribuido y Prevención Wait-Die / Wound-Wait</h2>
+            <p class="section-desc">Active la alternativa correcta en cada switch segmentado analizando el comportamiento de las marcas de tiempo.</p>
+
+            <details class="biblio-panel">
+                <summary class="biblio-summary">📖 Dónde estudiar este tema en la bibliografía</summary>
+                <div class="biblio-content">
+                    Silberschatz, Galvin & Gagne: Capítulo 18 (Sección 18.3, Interbloqueo Distribuido). Andrew S. Tanenbaum: Sistemas Distribuidos, Capítulo 6. Diapositivas de Cátedra: Unidad 7 (Diapositivas 23 a 29).
+                </div>
+            </details>
+
+            <!-- SIMULADOR 2: Wait-Die vs Wound-Wait -->
+            <div class="sim-container" style="margin-bottom: 2rem;">
+                <h3 style="font-size: 1.05rem; font-weight: 700; color: var(--primary);">⚖️ Simulador de Conflictos: Esperar-Morir vs. Herir-Esperar</h3>
+                <p style="font-size: 0.85rem; color: var(--text-muted);">
+                    Configure las marcas de tiempo de creación ($T_1$ y $T_2$, donde menor valor significa mayor antigüedad) para evaluar la acción preventiva.
+                </p>
+                <div class="sim-controls-grid">
+                    <div class="form-group">
+                        <label>T_solicitante (T_req):</label>
+                        <select class="form-control" id="sim-treq" onchange="runDeadlockSimulation()">
+                            <option value="10">Transacción Vieja (Marca 10)</option>
+                            <option value="20" selected>Transacción Joven (Marca 20)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>T_poseedor (T_hold):</label>
+                        <select class="form-control" id="sim-thold" onchange="runDeadlockSimulation()">
+                            <option value="10" selected>Transacción Vieja (Marca 10)</option>
+                            <option value="20">Transacción Joven (Marca 20)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Esquema Evaluado:</label>
+                        <select class="form-control" id="sim-scheme" onchange="runDeadlockSimulation()">
+                            <option value="wait_die">Esperar-Morir (Wait-Die)</option>
+                            <option value="wound_wait">Herir-Esperar (Wound-Wait)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="sim-status-card info" id="sim-deadlock-result">
+                    Resultado: Joven (20) solicita a Viejo (10) bajo Wait-Die &rarr; <strong>La transacción joven MUERE</strong> y se reinicia con su marca original.
+                </div>
+            </div>
+
+            <div class="switch-grid">
+                <!-- SW 1 -->
+                <div class="switch-item" data-qid="sw1_interbloqueo_fantasma">
+                    <div class="switch-title">1. Causa Primaria del Interbloqueo Fantasma (Phantom Deadlock):</div>
+                    <div class="segmented-control">
+                        <button type="button" class="seg-btn" data-val="RETARDOS_PROPAGACION_MENSAJES">Retardo en Mensajes</button>
+                        <button type="button" class="seg-btn" data-val="FALLO_HARDWARE_MEMORIA">Falla en Módulos RAM</button>
+                    </div>
+                </div>
+
+                <!-- SW 2 -->
+                <div class="switch-item" data-qid="sw2_sondas_chandy_misra">
+                    <div class="switch-title">2. Condición de Interbloqueo en Detección por Sondas (Chandy-Misra-Haas):</div>
+                    <div class="segmented-control">
+                        <button type="button" class="seg-btn" data-val="CICLO_RETORNA_AL_INICIADOR">Sonda Regresa al Iniciador</button>
+                        <button type="button" class="seg-btn" data-val="TIEMPO_VIDA_SONDA_EXPIRADO">Expiración de TTL en Red</button>
+                    </div>
+                </div>
+
+                <!-- SW 3 -->
+                <div class="switch-item" data-qid="sw3_wait_die_viejo_pide_joven">
+                    <div class="switch-title">3. Wait-Die: Transacción Vieja (T_req=10) solicita recurso retenido por Joven (T_hold=20):</div>
+                    <div class="segmented-control">
+                        <button type="button" class="seg-btn" data-val="VIEJO_ESPERA">Vieja Espera Pacíficamente</button>
+                        <button type="button" class="seg-btn" data-val="VIEJO_MUERE">Vieja Muere y Aborta</button>
+                    </div>
+                </div>
+
+                <!-- SW 4 -->
+                <div class="switch-item" data-qid="sw4_wait_die_joven_pide_viejo">
+                    <div class="switch-title">4. Wait-Die: Transacción Joven (T_req=20) solicita recurso retenido por Vieja (T_hold=10):</div>
+                    <div class="segmented-control">
+                        <button type="button" class="seg-btn" data-val="JOVEN_ESPERA">Joven Espera en Cola</button>
+                        <button type="button" class="seg-btn" data-val="JOVEN_MUERE_REINICIA">Joven Muere y Reinicia</button>
+                    </div>
+                </div>
+
+                <!-- SW 5 -->
+                <div class="switch-item" data-qid="sw5_wound_wait_viejo_pide_joven">
+                    <div class="switch-title">5. Wound-Wait: Transacción Vieja (T_req=10) solicita recurso retenido por Joven (T_hold=20):</div>
+                    <div class="segmented-control">
+                        <button type="button" class="seg-btn" data-val="VIEJO_HIERE_EXPROPIA_JOVEN">Vieja Hiere y Expropia</button>
+                        <button type="button" class="seg-btn" data-val="VIEJO_ESPERA">Vieja Espera a la Joven</button>
+                    </div>
+                </div>
+
+                <!-- SW 6 -->
+                <div class="switch-item" data-qid="sw6_wound_wait_joven_pide_viejo">
+                    <div class="switch-title">6. Wound-Wait: Transacción Joven (T_req=20) solicita recurso retenido por Vieja (T_hold=10):</div>
+                    <div class="segmented-control">
+                        <button type="button" class="seg-btn" data-val="JOVEN_ESPERA">Joven Espera a la Vieja</button>
+                        <button type="button" class="seg-btn" data-val="JOVEN_HIERE">Joven Hiere y Expropia</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 4: Algoritmos de Elección (Bully y Anillo) -->
+        <section class="glass-card" id="seccion-4">
+            <h2 class="section-title">4️⃣ Laboratorio Interactivo de Algoritmos de Elección (Bully y Anillo)</h2>
+            <p class="section-desc">Experimente con la elección de nuevo coordinador tras caídas de nodo y responda las consignas técnicas.</p>
+
+            <details class="biblio-panel">
+                <summary class="biblio-summary">📖 Dónde estudiar este tema en la bibliografía</summary>
+                <div class="biblio-content">
+                    Silberschatz, Galvin & Gagne: Capítulo 18 (Sección 18.5, Algoritmos de Elección). Andrew S. Tanenbaum: Sistemas Distribuidos, Capítulo 6. Diapositivas de Cátedra: Unidad 7 (Diapositivas 30 a 36).
+                </div>
+            </details>
+
+            <!-- SIMULADOR 3: Bully Algorithm -->
+            <div class="sim-container" style="margin-bottom: 2rem;">
+                <h3 style="font-size: 1.05rem; font-weight: 700; color: var(--primary);">👑 Simulador del Algoritmo Bully (Nodos 1 a 7)</h3>
+                <p style="font-size: 0.85rem; color: var(--text-muted);">
+                    El nodo 7 es el coordinador actual. Simule su caída, convoque una elección desde el nodo 3 y observe la reactivación del matón.
+                </p>
+                <div class="nodes-display-grid" id="bully-nodes-grid">
+                    <div class="node-card" id="bnode-1"><span>Nodo 1</span><span class="badge-tag blue">Vivo</span></div>
+                    <div class="node-card" id="bnode-2"><span>Nodo 2</span><span class="badge-tag blue">Vivo</span></div>
+                    <div class="node-card" id="bnode-3"><span>Nodo 3</span><span class="badge-tag blue">Vivo</span></div>
+                    <div class="node-card" id="bnode-4"><span>Nodo 4</span><span class="badge-tag blue">Vivo</span></div>
+                    <div class="node-card" id="bnode-5"><span>Nodo 5</span><span class="badge-tag blue">Vivo</span></div>
+                    <div class="node-card" id="bnode-6"><span>Nodo 6</span><span class="badge-tag blue">Vivo</span></div>
+                    <div class="node-card active" id="bnode-7"><span>Nodo 7</span><span class="badge-tag emerald">Líder</span></div>
+                </div>
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                    <button class="btn btn-outline" style="font-size: 0.8rem;" onclick="simCrashLeader()">💥 Caída del Líder (Nodo 7)</button>
+                    <button class="btn btn-primary" style="font-size: 0.8rem;" onclick="simElectionFromP3()">🚀 Iniciar Elección desde Nodo 3</button>
+                    <button class="btn btn-outline" style="font-size: 0.8rem;" onclick="simReviveLeader()">⚡ Reactivar Nodo 7 (Bully)</button>
+                    <button class="btn btn-outline" style="font-size: 0.8rem;" onclick="resetBullySim()">🔄 Resetear</button>
+                </div>
+                <div class="sim-log-terminal" id="bully-log">
+                    &gt; Topología lista. Nodo 7 activo como Coordinador.
+                </div>
+            </div>
+
+            <div class="select-grid">
+                <!-- Select 1 -->
+                <div class="select-card" data-qid="sim_bully_deteccion_timeout">
+                    <div class="select-card-header">
+                        <span>1. Timeout de Detección en Bully:</span>
+                        <span style="font-size: 0.82rem; color: var(--text-muted);">¿Qué fórmula define el tiempo de espera mínimo para declarar caído al líder?</span>
+                    </div>
+                    <select class="select-box" id="select-sim_bully_deteccion_timeout">
+                        <option value="">-- Seleccione una opción evaluativa --</option>
+                        <option value="DOS_TP_MAS_TT">2Tp + Tt (Dos veces el tiempo de propagación de red más el tiempo de tratamiento local)</option>
+                        <option value="TP_POR_NUMERO_NODOS">Tp * N (El tiempo de propagación multiplicado por el número total de máquinas)</option>
+                        <option value="TT_DIVIDIDO_DOS">Tt / 2 (La mitad del tiempo de ejecución del proceso líder en su procesador)</option>
+                        <option value="TIEMPO_RTT_EXPONENCIAL">2^(RTT) (Un retardo exponencial basado en la tasa de retransmisión TCP)</option>
+                    </select>
+                </div>
+
+                <!-- Select 2 -->
+                <div class="select-card" data-qid="sim_bully_quien_recibe_eleccion">
+                    <div class="select-card-header">
+                        <span>2. Convocatoria en Bully:</span>
+                        <span style="font-size: 0.82rem; color: var(--text-muted);">¿A qué nodos transmite el mensaje ELECCION el proceso que inicia la elección?</span>
+                    </div>
+                    <select class="select-box" id="select-sim_bully_quien_recibe_eleccion">
+                        <option value="">-- Seleccione una opción evaluativa --</option>
+                        <option value="NODOS_CON_ID_MAYOR">Exclusivamente a todos los nodos con identificador numérico superior al suyo propio.</option>
+                        <option value="TODOS_LOS_NODOS_RED">A la totalidad de nodos del clúster mediante una trama de broadcast indiscriminada.</option>
+                        <option value="VECINO_INMEDIATO_DERECHO">Únicamente a su vecino lógico contiguo en el sentido de las agujas del reloj.</option>
+                        <option value="COORDINADOR_ANTERIOR">Al nodo que ejercía de líder para verificar si continúa recibiendo paquetes.</option>
+                    </select>
+                </div>
+
+                <!-- Select 3 -->
+                <div class="select-card" data-qid="sim_bully_regreso_nodo_alto">
+                    <div class="select-card-header">
+                        <span>3. Regreso del Nodo de Mayor Rango:</span>
+                        <span style="font-size: 0.82rem; color: var(--text-muted);">¿Qué sucede cuando un nodo recuperado con el ID más alto vuelve a estar en línea?</span>
+                    </div>
+                    <select class="select-box" id="select-sim_bully_regreso_nodo_alto">
+                        <option value="">-- Seleccione una opción evaluativa --</option>
+                        <option value="IMPONE_LIDERAZGO_INMEDIATO">Convoca de inmediato una elección y se impone como nuevo coordinador desplazando al actual.</option>
+                        <option value="SUBORDINA_AL_LIDER_ACTUAL">Acepta pacíficamente el liderazgo del coordinador vigente hasta que este falle.</option>
+                        <option value="ESPERA_PROXIMO_REINICIO">Permanece en estado de reposo sin participar en mensajes hasta el próximo ciclo programado.</option>
+                        <option value="DIVIDE_GRUPO_SUBREDES">Provoca una partición de red asignándose el control de la mitad de los procesos.</option>
+                    </select>
+                </div>
+
+                <!-- Select 4 -->
+                <div class="select-card" data-qid="sim_anillo_criterio_ganador">
+                    <div class="select-card-header">
+                        <span>4. Elección en Anillo (Chang & Roberts):</span>
+                        <span style="font-size: 0.82rem; color: var(--text-muted);">¿Cómo determina el iniciador al nuevo líder tras completar la vuelta?</span>
+                    </div>
+                    <select class="select-box" id="select-sim_anillo_criterio_ganador">
+                        <option value="">-- Seleccione una opción evaluativa --</option>
+                        <option value="NODO_CON_MAXIMO_ID_LISTA">El iniciador extrae la lista de nodos activos y proclama coordinador al nodo con el identificador más alto.</option>
+                        <option value="PRIMER_NODO_QUE_INICIO">El propio nodo iniciador se proclama líder por haber sido el primero en detectar la anomalía.</option>
+                        <option value="NODO_CON_MENOR_CARGA_CPU">Se calcula la media de utilización de procesador y se elige al nodo con menor consumo registrado.</option>
+                        <option value="ULTIMO_NODO_QUE_FIRMO">Se designa líder al último nodo que adjuntó su dirección antes del cierre del paquete.</option>
+                    </select>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 5: Flujo Secuencial del Algoritmo Bully (Drag & Drop) -->
+        <section class="glass-card" id="seccion-5">
+            <h2 class="section-title">5️⃣ Secuencia Operativa del Algoritmo Bully (El Matón)</h2>
+            <p class="section-desc">Arrastre las 6 etapas canónicas para ordenar secuencialmente el protocolo de elección de García-Molina.</p>
+
+            <details class="biblio-panel">
+                <summary class="biblio-summary">📖 Dónde estudiar este tema en la bibliografía</summary>
+                <div class="biblio-content">
+                    Silberschatz: Capítulo 18 (Sección 18.5). Andrew S. Tanenbaum: Sistemas Distribuidos, Capítulo 6. Diapositivas de Cátedra: Unidad 7 (Diapositivas 32 a 34).
+                </div>
+            </details>
+
+            <div class="dnd-container">
+                <div class="dnd-slots-container" id="dnd-bully-slots">
+                    <div class="dnd-slot" data-index="0">
+                        <span class="slot-index">Etapa 1</span>
+                        <div class="dnd-chip" data-id="1_NODO_DETECTA_FALLO_COORDINADOR_POR_TIMEOUT">
+                            <span>Un nodo detecta caída del coordinador por expiración de temporizador (T &gt; 2Tp + Tt).</span>
+                            <span class="chip-handle">☰</span>
+                        </div>
+                    </div>
+                    <div class="dnd-slot" data-index="1">
+                        <span class="slot-index">Etapa 2</span>
+                        <div class="dnd-chip" data-id="2_ENVIA_MENSAJE_ELECCION_A_NODOS_ID_MAYOR">
+                            <span>El nodo difunde un mensaje de ELECCION únicamente a los nodos con identificador mayor.</span>
+                            <span class="chip-handle">☰</span>
+                        </div>
+                    </div>
+                    <div class="dnd-slot" data-index="2">
+                        <span class="slot-index">Etapa 3</span>
+                        <div class="dnd-chip" data-id="3_SI_RECIBE_OK_CEDE_Y_ESPERA_NUEVO_LIDER">
+                            <span>Si recibe respuesta OK de algún nodo mayor, se inhibe y espera a que este asuma el mando.</span>
+                            <span class="chip-handle">☰</span>
+                        </div>
+                    </div>
+                    <div class="dnd-slot" data-index="3">
+                        <span class="slot-index">Etapa 4</span>
+                        <div class="dnd-chip" data-id="4_SI_EXPIRA_TIMEOUT_SIN_OK_PROCLAMA_LIDERAZGO">
+                            <span>Si expira el timeout sin recibir ningún OK de nodos superiores, se autoproclama nuevo líder.</span>
+                            <span class="chip-handle">☰</span>
+                        </div>
+                    </div>
+                    <div class="dnd-slot" data-index="4">
+                        <span class="slot-index">Etapa 5</span>
+                        <div class="dnd-chip" data-id="5_ENVIA_MENSAJE_COORDINADOR_A_TODOS_LOS_MENORES">
+                            <span>El nuevo líder transmite el mensaje COORDINADOR a todos los nodos con identificador menor.</span>
+                            <span class="chip-handle">☰</span>
+                        </div>
+                    </div>
+                    <div class="dnd-slot" data-index="5">
+                        <span class="slot-index">Etapa 6</span>
+                        <div class="dnd-chip" data-id="6_NODOS_SUBORDINADOS_ACTUALIZAN_TABLA_LIDER">
+                            <span>Los nodos subordinados reciben el anuncio y actualizan su referencia interna de coordinador.</span>
+                            <span class="chip-handle">☰</span>
+                        </div>
+                    </div>
+                </div>
+                <div style="display: flex; justify-content: flex-end;">
+                    <button class="btn btn-outline" style="font-size: 0.8rem;" onclick="resetBullyDndOrder()">🔀 Mezclar / Reordenar</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 6: Consenso Distribuido y Generales Bizantinos -->
+        <section class="glass-card" id="seccion-6">
+            <h2 class="section-title">6️⃣ Consenso Distribuido y Problema de los Generales Bizantinos</h2>
+            <p class="section-desc">Analice las condiciones de consistencia de Lamport y los límites de tolerancia para mensajes orales y firmados.</p>
+
+            <details class="biblio-panel">
+                <summary class="biblio-summary">📖 Dónde estudiar este tema en la bibliografía</summary>
+                <div class="biblio-content">
+                    Leslie Lamport, Robert Shostak & Marshall Pease (1982): "The Byzantine Generals Problem" (ACM TOPLAS). William Stallings: Capítulo 14. Diapositivas de Cátedra: Unidad 7 (Diapositivas 37 a 44).
+                </div>
+            </details>
+
+            <!-- SIMULADOR 4: Calculador de Tolerancia a Fallas Bizantinas -->
+            <div class="sim-container" style="margin-bottom: 2rem;">
+                <h3 style="font-size: 1.05rem; font-weight: 700; color: var(--primary);">🛡️ Calculador Matemático de Consenso de Lamport</h3>
+                <p style="font-size: 0.85rem; color: var(--text-muted);">
+                    Ingrese el número de generales traidores (m) para calcular la cantidad mínima de nodos requerida bajo ambos modelos:
+                </p>
+                <div class="sim-controls-grid">
+                    <div class="form-group">
+                        <label>Generales Traidores (m):</label>
+                        <input type="number" id="byz-m-input" class="form-control" value="1" min="1" max="10" oninput="calculateByzantineLimits()">
+                    </div>
+                    <div class="form-group">
+                        <label>Nodos Mínimos Orales OM(m):</label>
+                        <input type="text" id="byz-oral-result" class="form-control" readonly value="4 nodos (n > 3m)">
+                    </div>
+                    <div class="form-group">
+                        <label>Nodos Mínimos Firmados SM(m):</label>
+                        <input type="text" id="byz-signed-result" class="form-control" readonly value="3 nodos (n > m + 1)">
+                    </div>
+                </div>
+                <div class="sim-status-card info" id="byz-math-info">
+                    Para tolerar m = 1 traidor: se necesitan al menos 4 nodos con mensajes orales. Con 3 generales, 1 traidor impide alcanzar consenso.
+                </div>
+            </div>
+
+            <div class="select-grid">
+                <!-- Select 1 -->
+                <div class="select-card" data-qid="q1_fallas_bizantinas_caracteristica">
+                    <div class="select-card-header">
+                        <span>1. Taxonomía de Fallas:</span>
+                        <span style="font-size: 0.82rem; color: var(--text-muted);">¿Qué comportamiento define formalmente a una falla bizantina?</span>
+                    </div>
+                    <select class="select-box" id="select-q1_fallas_bizantinas_caracteristica">
+                        <option value="">-- Seleccione una opción evaluativa --</option>
+                        <option value="COMPORTAMIENTO_ARBITRARIO_O_MALICIOSO">El componente puede enviar respuestas contradictorias, mentiras deliberadas o actuar erráticamente.</option>
+                        <option value="DETENCION_LIMPIA_INMEDIATA">El proceso interrumpe su ejecución de forma instantánea sin transmitir ningún dato anómalo.</option>
+                        <option value="PERDIDA_CONECTIVIDAD_FISICA">La interfaz de red sufre un corte de cable sin alterar la lógica interna de los programas.</option>
+                        <option value="RETRASO_SINCRONICO_UNIFORME">Todos los mensajes del nodo sufren un retardo idéntico y predecible de propagación.</option>
+                    </select>
+                </div>
+
+                <!-- Select 2 -->
+                <div class="select-card" data-qid="q2_condicion_ic1_acuerdo">
+                    <div class="select-card-header">
+                        <span>2. Condición IC1 (Acuerdo):</span>
+                        <span style="font-size: 0.82rem; color: var(--text-muted);">¿Qué exige la consistencia interactiva IC1 en el problema de Lamport?</span>
+                    </div>
+                    <select class="select-box" id="select-q2_condicion_ic1_acuerdo">
+                        <option value="">-- Seleccione una opción evaluativa --</option>
+                        <option value="TODOS_LEALES_OBEDECEN_MISMA_ORDEN">Todos los tenientes leales deben obedecer exactamente la misma decisión final (Atacar o Retirarse).</option>
+                        <option value="EL_COMANDANTE_DECIDE_UNILATERAL">La orden del comandante se aplica de forma incondicional aunque este sea reconocido como traidor.</option>
+                        <option value="MAYORIA_ABSOLUTA_SOBRE_TRAIDORES">La cantidad de generales leales debe duplicar al número de intermediarios en el campo.</option>
+                        <option value="CONFIRMACION_POR_TERCEROS">Cada general debe recibir autorización escrita de al menos dos delegados gubernamentales.</option>
+                    </select>
+                </div>
+
+                <!-- Select 3 -->
+                <div class="select-card" data-qid="q3_condicion_ic2_validez">
+                    <div class="select-card-header">
+                        <span>3. Condición IC2 (Validez):</span>
+                        <span style="font-size: 0.82rem; color: var(--text-muted);">¿Qué estipula la condición de consistencia interactiva IC2?</span>
+                    </div>
+                    <select class="select-box" id="select-q3_condicion_ic2_validez">
+                        <option value="">-- Seleccione una opción evaluativa --</option>
+                        <option value="SI_COMANDANTE_LEAL_OBEDECEN_SU_ORDEN">Si el general comandante es leal, cada teniente leal debe obedecer la orden precisa que él transmitió.</option>
+                        <option value="SI_HAY_TRAIDORES_SE_RETIRAN">Si se detecta un mensaje contradictorio, todos los generales deben adoptar por defecto la retirada.</option>
+                        <option value="FIRMAS_CRIPTOGRAFICAS_OBLIGATORIAS">Es obligatorio descartar cualquier mensaje que no incorpore una llave asimétrica RSA.</option>
+                        <option value="UNANIMIDAD_TOTAL_DEL_GRUPO">Todos los nodos del sistema, incluidos los traidores, deben votar afirmativamente el acuerdo.</option>
+                    </select>
+                </div>
+
+                <!-- Select 4 -->
+                <div class="select-card" data-qid="q4_mensajes_orales_limite_m1">
+                    <div class="select-card-header">
+                        <span>4. Límite Teórico con Mensajes Orales (OM):</span>
+                        <span style="font-size: 0.82rem; color: var(--text-muted);">¿Cuántos nodos totales se requieren como mínimo para tolerar m = 1 traidor?</span>
+                    </div>
+                    <select class="select-box" id="select-q4_mensajes_orales_limite_m1">
+                        <option value="">-- Seleccione una opción evaluativa --</option>
+                        <option value="MINIMO_4_NODOS_N_MAYOR_3M">Al menos 4 nodos totales (cumpliendo la cota ineludible n &gt; 3m; con 3 nodos es imposible).</option>
+                        <option value="MINIMO_3_NODOS_MAYORIA">Exactamente 3 nodos (dos generales leales y un traidor alcanzan mayoría simple de dos tercios).</option>
+                        <option value="MINIMO_2_NODOS_DIRECTOS">Únicamente 2 nodos si la comunicación se realiza mediante canales dúplex punto a punto.</option>
+                        <option value="MINIMO_6_NODOS_CUADRATICO">Al menos 6 nodos para compensar la duplicación de mensajes en la segunda ronda oral.</option>
+                    </select>
+                </div>
+
+                <!-- Select 5 -->
+                <div class="select-card" data-qid="q5_mensajes_firmados_limite_m1">
+                    <div class="select-card-header">
+                        <span>5. Límite Teórico con Mensajes Firmados (SM):</span>
+                        <span style="font-size: 0.82rem; color: var(--text-muted);">¿Cuántos nodos totales se requieren para tolerar m = 1 traidor con firmas infalsificables?</span>
+                    </div>
+                    <select class="select-box" id="select-q5_mensajes_firmados_limite_m1">
+                        <option value="">-- Seleccione una opción evaluativa --</option>
+                        <option value="MINIMO_3_NODOS_N_MAYOR_M_MAS_1">Únicamente 3 nodos (la cota se reduce a n &gt; m + 1 al ser imposible alterar mensajes firmados).</option>
+                        <option value="MINIMO_5_NODOS_CRIPTO">Al menos 5 nodos para garantizar la distribución de claves públicas entre los tenientes.</option>
+                        <option value="MINIMO_1_NODO_AUTONOMO">Un solo nodo porque las firmas permiten verificar la verdad sin consultar a otros generales.</option>
+                        <option value="MINIMO_4_NODOS_IGUAL_ORAL">Exactamente 4 nodos porque la criptografía no altera las restricciones matemáticas de quórum.</option>
+                    </select>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer Card de Entrega -->
+        <section class="glass-card download-footer-card">
+            <h2 style="font-size: 1.3rem; font-weight: 700;">📥 Descarga de Archivo de Respuestas</h2>
+            <p style="color: var(--text-muted); font-size: 0.9rem; max-width: 600px;">
+                Alcanzado el 100% del progreso académico (31/31 ítems) y completados los datos del alumno, se habilitará la descarga del archivo <code>respuestas_tp07.json</code>.
+            </p>
+            <button class="btn btn-primary" id="btn-download-bottom" disabled style="padding: 0.8rem 1.75rem; font-size: 1rem;">
+                📥 Descargar respuestas_tp07.json
+            </button>
+            <div id="download-status-msg" style="font-size: 0.85rem; color: var(--amber); font-weight: 500;">
+                Progreso actual incompleto. Complete todos los ejercicios y sus datos personales.
+            </div>
+        </section>
+
+        <footer class="footer-credits">
+            UNJu — Facultad de Ingeniería — Sistemas Operativos II — Ciclo Lectivo 2026<br>
+            Cátedra: Ing. María Fernanda Vázquez (Titular) | Ing. Fabio Damián Argañaraz Azua (JTP)
+        </footer>
+    </main>
+
+    <!-- Toast Notifications Container -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,36 @@
+name: GitHub Classroom Autograding - TP 7
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+permissions:
+  checks: write
+  actions: read
+  contents: read
+
+jobs:
+  evaluacion-autograding:
+    name: Autograding Tests - TP7
+    runs-on: ubuntu-latest
+    if: "!contains(github.event.head_commit.message, 'skip ci')"
+
+    steps:
+      - name: Checkout del Repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Entorno Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Configurar Permisos de Ejecución
+        run: |
+          chmod +x test.sh autograder_tp07.py
+
+      - name: Ejecutar Suite de Evaluación de TP7 (Módulo Web)
+        run: |
+          ./test.sh
