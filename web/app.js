@@ -7,10 +7,29 @@
  */
 
 document.addEventListener('DOMContentLoaded', () => {
-    const STORAGE_KEY = 'UNJU_SO2_TP7_STATE_V1';
-    const TOTAL_ACADEMIC_ITEMS = 31;
+    const STORAGE_KEY = 'UNJU_SO2_TP7_STATE_V2';
+    const TOTAL_ACADEMIC_ITEMS = 26;
 
-    // Estado Reactivo de la Aplicación (6 Secciones Académicas)
+    // Etapas canónicas del Algoritmo Bully (Flujo Condicional con Ramas A y B)
+    const bullyStagesDesc = {
+        '1_DETECTA_FALLA_COORDINADOR_POR_TIMEOUT': '1. Un nodo detecta la falla del coordinador por expiración de temporizador (T > 2Tp + Tt).',
+        '2_ENVIA_MENSAJE_ELECCION_A_NODOS_ID_MAYOR': '2. Envía un mensaje de ELECCIÓN únicamente a los nodos con identificador superior.',
+        '3_ESPERA_RESPUESTAS_EVALUA_SI_RECIBE_OK': '3. Espera respuestas durante el tiempo límite: evalúa si recibe algún mensaje OK.',
+        '4_RAMA_SI_RECIBE_OK_DEJA_DE_COMPETIR_Y_ESPERA': '4. Rama A: Si recibe OK de un nodo mayor, deja de competir y espera el anuncio del nuevo coordinador.',
+        '5_RAMA_SI_NO_RECIBE_OK_PROCLAMA_COORDINADOR': '5. Rama B: Si expira el temporizador sin recibir ningún OK, se proclama coordinador.',
+        '6_COMUNICA_NUEVO_COORDINADOR_RESTO_NODOS_ACTIVOS': '6. El nuevo líder envía el mensaje COORDINADOR al resto de los nodos activos.'
+    };
+
+    const INITIAL_SHUFFLED_BULLY_STAGES = [
+        '3_ESPERA_RESPUESTAS_EVALUA_SI_RECIBE_OK',
+        '1_DETECTA_FALLA_COORDINADOR_POR_TIMEOUT',
+        '6_COMUNICA_NUEVO_COORDINADOR_RESTO_NODOS_ACTIVOS',
+        '2_ENVIA_MENSAJE_ELECCION_A_NODOS_ID_MAYOR',
+        '5_RAMA_SI_NO_RECIBE_OK_PROCLAMA_COORDINADOR',
+        '4_RAMA_SI_RECIBE_OK_DEJA_DE_COMPETIR_Y_ESPERA'
+    ];
+
+    // Estado Reactivo de la Aplicación (6 Secciones Académicas, 26 Ítems)
     const state = {
         estudiante: {
             nombre: '',
@@ -46,14 +65,8 @@ document.addEventListener('DOMContentLoaded', () => {
             sim_anillo_criterio_ganador: null
         },
         seccion5_secuencia_algoritmos: {
-            orden_algoritmo_bully: [
-                '1_NODO_DETECTA_FALLO_COORDINADOR_POR_TIMEOUT',
-                '2_ENVIA_MENSAJE_ELECCION_A_NODOS_ID_MAYOR',
-                '3_SI_RECIBE_OK_CEDE_Y_ESPERA_NUEVO_LIDER',
-                '4_SI_EXPIRA_TIMEOUT_SIN_OK_PROCLAMA_LIDERAZGO',
-                '5_ENVIA_MENSAJE_COORDINADOR_A_TODOS_LOS_MENORES',
-                '6_NODOS_SUBORDINADOS_ACTUALIZAN_TABLA_LIDER'
-            ]
+            orden_algoritmo_bully: [...INITIAL_SHUFFLED_BULLY_STAGES],
+            interacted: false
         },
         seccion6_consenso_bizantino: {
             q1_fallas_bizantinas_caracteristica: null,
@@ -107,7 +120,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --------------------------------------------------------------------------
-    // 3. Conteo de Progreso Estrictamente Académico (31 Ítems)
+    // 3. Conteo de Progreso Académico (26 Ítems)
     // --------------------------------------------------------------------------
     function countCompletedItems() {
         let count = 0;
@@ -132,10 +145,9 @@ document.addEventListener('DOMContentLoaded', () => {
             if (state.seccion4_algoritmos_eleccion[k]) count++;
         }
 
-        // Sección 5: 6 etapas ordenadas
-        const dnd = state.seccion5_secuencia_algoritmos.orden_algoritmo_bully;
-        if (Array.isArray(dnd) && dnd.length === 6 && dnd.every(x => Boolean(x))) {
-            count += 6;
+        // Sección 5: 1 ítem académico (completado cuando el alumno interactúa y ordena)
+        if (state.seccion5_secuencia_algoritmos.interacted) {
+            count += 1;
         }
 
         // Sección 6: 5 selects
@@ -160,7 +172,7 @@ document.addEventListener('DOMContentLoaded', () => {
         btnDownloadBottom.disabled = !isReady;
 
         if (isReady) {
-            downloadStatusMsg.innerHTML = '<span style="color: var(--accent);">¡Excelente! Trabajo Práctico completo y listo para descargar respuestas_tp07.json.</span>';
+            downloadStatusMsg.innerHTML = '<span style="color: var(--accent);">Se respondieron todos los ítems. El archivo está listo para su entrega y posterior corrección.</span>';
             if (!hasTriggeredConfetti && typeof confetti === 'function') {
                 confetti({
                     particleCount: 120,
@@ -168,10 +180,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     origin: { y: 0.6 }
                 });
                 hasTriggeredConfetti = true;
-                showToast('¡Felicitaciones! Has completado el 100% del TP 7 🎉', 'success');
+                showToast('Ha respondido los 26 ítems. Archivo listo para descargar 🎉', 'success');
             }
         } else {
-            let msg = `Progreso académico: ${completed}/${TOTAL_ACADEMIC_ITEMS} ítems resueltos.`;
+            let msg = `Progreso: ${completed}/${TOTAL_ACADEMIC_ITEMS} ítems respondidos.`;
             if (!hasStudentInfo) {
                 msg += ' Recuerde ingresar su Nombre y Legajo.';
             }
@@ -201,8 +213,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 Object.assign(state.seccion2_exclusion_mutua, parsed.seccion2_exclusion_mutua || {});
                 Object.assign(state.seccion3_interbloqueo_prevencion, parsed.seccion3_interbloqueo_prevencion || {});
                 Object.assign(state.seccion4_algoritmos_eleccion, parsed.seccion4_algoritmos_eleccion || {});
-                if (parsed.seccion5_secuencia_algoritmos && Array.isArray(parsed.seccion5_secuencia_algoritmos.orden_algoritmo_bully)) {
-                    state.seccion5_secuencia_algoritmos.orden_algoritmo_bully = parsed.seccion5_secuencia_algoritmos.orden_algoritmo_bully;
+                if (parsed.seccion5_secuencia_algoritmos) {
+                    if (Array.isArray(parsed.seccion5_secuencia_algoritmos.orden_algoritmo_bully)) {
+                        state.seccion5_secuencia_algoritmos.orden_algoritmo_bully = parsed.seccion5_secuencia_algoritmos.orden_algoritmo_bully;
+                    }
+                    if (typeof parsed.seccion5_secuencia_algoritmos.interacted === 'boolean') {
+                        state.seccion5_secuencia_algoritmos.interacted = parsed.seccion5_secuencia_algoritmos.interacted;
+                    }
                 }
                 Object.assign(state.seccion6_consenso_bizantino, parsed.seccion6_consenso_bizantino || {});
                 renderStateToUI();
@@ -271,7 +288,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // --------------------------------------------------------------------------
     // 5. Enlace de Eventos en Formularios y Controles
     // --------------------------------------------------------------------------
-    // Inputs de datos personales
     ['alumno-nombre', 'alumno-legajo', 'alumno-github'].forEach(id => {
         const input = document.getElementById(id);
         input.addEventListener('input', () => {
@@ -342,15 +358,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // --------------------------------------------------------------------------
     // 6. Drag & Drop - Sección 5 (Algoritmo Bully)
     // --------------------------------------------------------------------------
-    const bullyStagesDesc = {
-        '1_NODO_DETECTA_FALLO_COORDINADOR_POR_TIMEOUT': 'Un nodo detecta caída del coordinador por expiración de temporizador (T > 2Tp + Tt).',
-        '2_ENVIA_MENSAJE_ELECCION_A_NODOS_ID_MAYOR': 'El nodo difunde un mensaje de ELECCION únicamente a los nodos con identificador mayor.',
-        '3_SI_RECIBE_OK_CEDE_Y_ESPERA_NUEVO_LIDER': 'Si recibe respuesta OK de algún nodo mayor, se inhibe y espera a que este asuma el mando.',
-        '4_SI_EXPIRA_TIMEOUT_SIN_OK_PROCLAMA_LIDERAZGO': 'Si expira el timeout sin recibir ningún OK de nodos superiores, se autoproclama nuevo líder.',
-        '5_ENVIA_MENSAJE_COORDINADOR_A_TODOS_LOS_MENORES': 'El nuevo líder transmite el mensaje COORDINADOR a todos los nodos con identificador menor.',
-        '6_NODOS_SUBORDINADOS_ACTUALIZAN_TABLA_LIDER': 'Los nodos subordinados reciben el anuncio y actualizan su referencia interna de coordinador.'
-    };
-
     function renderDndSlotsFromState() {
         const container = document.getElementById('dnd-bully-slots');
         if (!container) return;
@@ -403,6 +410,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         if (badge) badge.textContent = `Etapa ${idx + 1}`;
                     });
                     state.seccion5_secuencia_algoritmos.orden_algoritmo_bully = newOrder;
+                    state.seccion5_secuencia_algoritmos.interacted = true;
                     saveState();
                     updateProgressUI();
                 }
@@ -411,14 +419,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     window.resetBullyDndOrder = function() {
-        const keys = Object.keys(bullyStagesDesc);
-        // Shuffle determinista invertido
-        keys.reverse();
-        state.seccion5_secuencia_algoritmos.orden_algoritmo_bully = keys;
+        // Mezclar alternando elementos
+        const current = [...state.seccion5_secuencia_algoritmos.orden_algoritmo_bully];
+        current.reverse();
+        state.seccion5_secuencia_algoritmos.orden_algoritmo_bully = current;
+        state.seccion5_secuencia_algoritmos.interacted = true;
         renderDndSlotsFromState();
         saveState();
         updateProgressUI();
-        showToast('Etapas mezcladas. Arrastre para colocarlas en orden secuencial.', 'info');
+        showToast('Etapas reorganizadas. Arrastre las tarjetas para colocarlas en orden secuencial.', 'info');
     };
 
     // --------------------------------------------------------------------------
@@ -429,7 +438,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.triggerLamportLocalEvent = function(nodeId) {
         lamportClocks[nodeId] += 1;
         document.getElementById(`clock-p${nodeId}`).textContent = lamportClocks[nodeId];
-        logLamport(`[P${nodeId}] Suceso local ejecutado. Reloj incrementa: C_${nodeId} = ${lamportClocks[nodeId]}`);
+        logLamport(`[P${nodeId}] Evento local registrado. Reloj incrementa: C_${nodeId} = ${lamportClocks[nodeId]}`);
         highlightNode(`sim-node-p${nodeId}`);
     };
 
@@ -484,12 +493,12 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        const isReqOlder = tReq < tHold; // Menor marca = Más vieja
+        const isReqOlder = tReq < tHold; // Menor marca = Más antigua
 
         if (scheme === 'wait_die') {
             if (isReqOlder) {
                 resBox.className = 'sim-status-card success';
-                resBox.innerHTML = `Vieja (${tReq}) solicita a Joven (${tHold}) bajo Wait-Die &rarr; <strong>La transacción vieja ESPERA</strong> pacíficamente a que la joven libere el recurso.`;
+                resBox.innerHTML = `Vieja (${tReq}) solicita a Joven (${tHold}) bajo Wait-Die &rarr; <strong>La transacción vieja PERMANECE BLOQUEADA</strong> hasta que la joven libere el recurso.`;
             } else {
                 resBox.className = 'sim-status-card error';
                 resBox.innerHTML = `Joven (${tReq}) solicita a Vieja (${tHold}) bajo Wait-Die &rarr; <strong>La transacción joven MUERE</strong> y se reinicia conservando su marca original.`;
@@ -498,7 +507,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // wound_wait
             if (isReqOlder) {
                 resBox.className = 'sim-status-card error';
-                resBox.innerHTML = `Vieja (${tReq}) solicita a Joven (${tHold}) bajo Wound-Wait &rarr; <strong>La transacción vieja HIERE</strong> (expropia el recurso) y la joven se cancela/reinicia.`;
+                resBox.innerHTML = `Vieja (${tReq}) solicita a Joven (${tHold}) bajo Wound-Wait &rarr; <strong>La transacción vieja HIERE</strong> (expropia el recurso) y la joven se cancela y reinicia.`;
             } else {
                 resBox.className = 'sim-status-card success';
                 resBox.innerHTML = `Joven (${tReq}) solicita a Vieja (${tHold}) bajo Wound-Wait &rarr; <strong>A la transacción joven se le permite ESPERAR</strong> a que la vieja termine.`;
@@ -526,11 +535,13 @@ document.addEventListener('DOMContentLoaded', () => {
             showToast('El Nodo 7 continúa activo como líder. Debe simular su caída primero.', 'info');
             return;
         }
-        logBully('Nodo 3 detecta timeout (T > 2Tp + Tt) y convoca ELECCION a nodos superiores (4, 5, 6, 7).');
-        logBully('Nodos 4, 5 y 6 responden OK al Nodo 3. El Nodo 3 se inhibe.');
-        logBully('Nodo 6 convoca ELECCION al Nodo 7. El Nodo 7 no responde.');
-        logBully('Expira el temporizador para el Nodo 6. ¡El Nodo 6 se autoproclama nuevo COORDINADOR!');
-        logBully('Nodo 6 envía mensaje COORDINADOR a los nodos 1, 2, 3, 4 y 5.');
+        logBully('Nodo 3 detecta timeout (T > 2Tp + Tt) y convoca ELECCIÓN a nodos superiores (4, 5, 6, 7).');
+        logBully('Nodos 4, 5 y 6 responden OK al Nodo 3. El Nodo 3 deja de competir y espera.');
+        logBully('Nota: Los nodos 4 y 5 inician sus respectivas elecciones; la simulación sigue la rama principal conducida por el Nodo 6.');
+        logBully('Nodo 6 convoca ELECCIÓN al Nodo 7. El Nodo 7 no responde.');
+        logBully('Expira el temporizador para el Nodo 6 sin recibir respuestas superiores.');
+        logBully('¡El Nodo 6 se proclama nuevo COORDINADOR!');
+        logBully('El nuevo líder envía el mensaje COORDINADOR al resto de los nodos activos (1 a 5).');
 
         bullyCoordinator = 6;
         document.querySelectorAll('#bully-nodes-grid .node-card').forEach(nc => nc.classList.remove('active'));
@@ -544,16 +555,16 @@ document.addEventListener('DOMContentLoaded', () => {
         node7Alive = true;
         const n7 = document.getElementById('bnode-7');
         n7.className = 'node-card active';
-        n7.innerHTML = '<span>Nodo 7</span><span class="badge-tag emerald">Líder (Bully)</span>';
+        n7.innerHTML = '<span>Nodo 7</span><span class="badge-tag emerald">Líder</span>';
 
         const n6 = document.getElementById('bnode-6');
         n6.className = 'node-card';
         n6.innerHTML = '<span>Nodo 6</span><span class="badge-tag blue">Vivo</span>';
 
-        logBully('⚡ Nodo 7 (mayor ID) se reactiva en la red.');
-        logBully('Nodo 7 inicia elección de inmediato y como no hay nodos superiores, se impone como COORDINADOR (Bully).');
-        logBully('Nodo 7 envía mensaje COORDINADOR a todos los nodos (1 a 6). El Nodo 6 cede el control.');
-        showToast('El Nodo 7 se reactivó e impuso su liderazgo inmediatamente.', 'info');
+        logBully('⚡ Nodo 7 (mayor ID) se reincorpora a la red.');
+        logBully('Nodo 7 inicia de inmediato una nueva elección y, al no existir nodos superiores, resulta COORDINADOR.');
+        logBully('El nuevo líder envía el mensaje COORDINADOR al resto de los nodos activos (1 a 6). El Nodo 6 cede el control.');
+        showToast('El Nodo 7 se reincorporó e inició elección, resultando nuevo líder.', 'info');
     };
 
     window.resetBullySim = function() {
@@ -590,7 +601,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('byz-signed-result').value = `${minSigned} nodos (n > m + 1)`;
 
         const info = document.getElementById('byz-math-info');
-        info.innerHTML = `Para tolerar <strong>m = ${m}</strong> traidores: se requieren al menos <strong>${minOral} generales</strong> bajo Mensajes Orales. Con firmas digitales no falsificables, la cota se reduce a solo <strong>${minSigned} generales</strong>.`;
+        info.innerHTML = `Para tolerar <strong>m = ${m}</strong> traidores: se requieren al menos <strong>${minOral} generales</strong> bajo Mensajes Orales (n > 3m). Con firmas no falsificables, el algoritmo tolera cualquier cantidad de procesos traidores siempre que exista la cantidad exigida por el modelo de cátedra (<strong>${minSigned} generales</strong>, n > m + 1).`;
     };
 
     // --------------------------------------------------------------------------
@@ -601,7 +612,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const hasStudentInfo = Boolean(state.estudiante.nombre.trim()) && Boolean(state.estudiante.legajo.trim());
 
         if (completed < TOTAL_ACADEMIC_ITEMS || !hasStudentInfo) {
-            showToast('Debe completar los 31 ítems académicos y sus datos antes de descargar.', 'warn');
+            showToast('Debe responder los 26 ítems académicos y completar sus datos antes de descargar.', 'warn');
             return;
         }
 
@@ -658,6 +669,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (imported.seccion4_algoritmos_eleccion) Object.assign(state.seccion4_algoritmos_eleccion, imported.seccion4_algoritmos_eleccion);
                 if (imported.seccion5_secuencia_algoritmos && Array.isArray(imported.seccion5_secuencia_algoritmos.orden_algoritmo_bully)) {
                     state.seccion5_secuencia_algoritmos.orden_algoritmo_bully = imported.seccion5_secuencia_algoritmos.orden_algoritmo_bully;
+                    state.seccion5_secuencia_algoritmos.interacted = true;
                 }
                 if (imported.seccion6_consenso_bizantino) Object.assign(state.seccion6_consenso_bizantino, imported.seccion6_consenso_bizantino);
 
@@ -679,4 +691,3 @@ document.addEventListener('DOMContentLoaded', () => {
     renderDndSlotsFromState();
     updateProgressUI();
 });
-

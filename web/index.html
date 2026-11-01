@@ -27,13 +27,13 @@
             <div class="progress-track">
                 <div class="progress-fill" id="progress-fill"></div>
             </div>
-            <span class="progress-label" id="progress-label">0% (0/31)</span>
+            <span class="progress-label" id="progress-label">0% (0/26)</span>
         </div>
         <div class="toolbar-actions">
             <button class="btn btn-icon" id="btn-theme-toggle" title="Alternar Modo Claro / Oscuro">🌓</button>
             <button class="btn btn-outline" id="btn-import-json" title="Cargar respuestas guardadas">📂 Cargar</button>
             <input type="file" id="file-import-input" accept=".json" style="display: none;">
-            <button class="btn btn-primary" id="btn-download-json" disabled title="Debe completar los 31 ítems académicos y sus datos personales para descargar">
+            <button class="btn btn-primary" id="btn-download-json" disabled title="Debe responder los 26 ítems académicos y sus datos personales para descargar">
                 📥 Descargar respuestas_tp07.json
             </button>
         </div>
@@ -52,7 +52,7 @@
             </div>
             <h1>Laboratorio Interactivo de Coordinación Distribuida</h1>
             <p>
-                Plataforma interactiva de experimentación práctica y autoevaluación criptográfica para la Unidad 7. Experimente con los simuladores interactivos de Relojes Lógicos de Lamport, prevención de interbloqueos (Wait-Die vs. Wound-Wait), algoritmos de elección de líder (Bully vs. Anillo) y cálculo de tolerancia a fallas en el Problema de los Generales Bizantinos. Complete las 6 secciones académicas (31 ítems) para generar su archivo de entrega <code>respuestas_tp07.json</code>.
+                Plataforma interactiva de experimentación práctica y registro de respuestas para la Unidad 7. Experimente con los simuladores interactivos de Relojes Lógicos de Lamport, prevención de interbloqueos (Wait-Die vs. Wound-Wait), algoritmos de elección de líder (Bully vs. Anillo) y cálculo de tolerancia a fallas en el Problema de los Generales Bizantinos. Complete las 6 secciones académicas (26 ítems) para generar su archivo de entrega <code>respuestas_tp07.json</code>.
             </p>
         </section>
 
@@ -70,8 +70,8 @@
                     <input type="text" id="alumno-legajo" class="form-control" placeholder="Ej. 18240" required>
                 </div>
                 <div class="form-group">
-                    <label for="alumno-github">Usuario de GitHub *</label>
-                    <input type="text" id="alumno-github" class="form-control" placeholder="Ej. lgomez-unju" required>
+                    <label for="alumno-github">Usuario de GitHub (opcional)</label>
+                    <input type="text" id="alumno-github" class="form-control" placeholder="Ej. lgomez-unju">
                 </div>
             </div>
         </section>
@@ -89,10 +89,11 @@
             </details>
 
             <!-- SIMULADOR 1: Relojes de Lamport -->
+            <div class="sim-guide-callout">💡 <strong>Guía metodológica:</strong> Explore primero el simulador interactivo y luego responda las consignas de la sección.</div>
             <div class="sim-container" style="margin-bottom: 2rem;">
                 <h3 style="font-size: 1.05rem; font-weight: 700; color: var(--primary);">⏱️ Simulador de Relojes Lógicos de Lamport (P1, P2, P3)</h3>
                 <p style="font-size: 0.85rem; color: var(--text-muted);">
-                    Ejecute sucesos locales (incrementa +1) o transmita mensajes entre nodos para observar la regla de recepción: <code>C_j &larr; 1 + max(C_j, T_i)</code>.
+                    Registre eventos locales (incrementa +1) o transmita mensajes entre nodos para observar la regla formal de recepción: <code>C<sub>j</sub> &larr; 1 + max(C<sub>j</sub>, T<sub>i</sub>)</code>.
                 </p>
                 <div class="nodes-display-grid">
                     <div class="node-card" id="sim-node-p1">
@@ -156,7 +157,7 @@
                     <label class="radio-card">
                         <input type="radio" name="q2_ejemplo_banco_inconsistencia" value="MENSAJES_TRANSFERENCIA_EN_TRANSITO">
                         <span class="radio-letter">A)</span>
-                        <span class="radio-text">La existencia de mensajes de transferencia en tránsito por la red durante el instante en que se capturan las fotos locales.</span>
+                        <span class="radio-text">La existencia de mensajes de transferencia en tránsito por la red durante el instante en que se capturan las instantáneas locales.</span>
                     </label>
                     <label class="radio-card">
                         <input type="radio" name="q2_ejemplo_banco_inconsistencia" value="DUPLICACION_TRANSACCIONES_MEMORIA">
@@ -205,7 +206,7 @@
 
             <!-- Q4 -->
             <div class="question-block" data-qid="q4_regla_receptor_lamport">
-                <div class="question-header">4. Al recibir un mensaje con marca Ti, ¿qué valor asigna el nodo receptor j a su contador local Cj?</div>
+                <div class="question-header">4. Al recibir un mensaje con marca T<sub>i</sub>, ¿qué valor asigna el nodo receptor j a su contador local C<sub>j</sub>?</div>
                 <div class="radio-cards-grid">
                     <label class="radio-card">
                         <input type="radio" name="q4_regla_receptor_lamport" value="ASIGNA_RELOJ_FISICO_CONMUTADOR">
@@ -232,7 +233,7 @@
 
             <!-- Q5 -->
             <div class="question-block" data-qid="q5_ordenacion_total_desempate">
-                <div class="question-header">5. En la ordenación total de Lamport, ¿cómo se desempata si dos mensajes distintos poseen exactamente la misma marca de tiempo (Ti = Tj)?</div>
+                <div class="question-header">5. En la ordenación total de Lamport, ¿cómo se desempata si dos mensajes distintos poseen exactamente la misma marca de tiempo (T<sub>i</sub> = T<sub>j</sub>)?</div>
                 <div class="radio-cards-grid">
                     <label class="radio-card">
                         <input type="radio" name="q5_ordenacion_total_desempate" value="PRIORIZA_LONGITUD_CARGA_UTIL">
@@ -289,12 +290,12 @@
                 <!-- Select 2 -->
                 <div class="select-card" data-qid="q2_ricart_agrawala_mensajes">
                     <div class="select-card-header">
-                        <span>2. Enfoque Distribuido (Ricart-Agrawala):</span>
-                        <span style="font-size: 0.82rem; color: var(--text-muted);">¿Cuántos mensajes totales genera por cada entrada a SC en un grupo de N nodos?</span>
+                        <span>2. Enfoque Distribuido (Segunda versión presentada en cátedra / Ricart-Agrawala):</span>
+                        <span style="font-size: 0.82rem; color: var(--text-muted);">¿Cuántos mensajes genera por cada entrada a la sección crítica en un grupo de N nodos?</span>
                     </div>
                     <select class="select-box" id="select-q2_ricart_agrawala_mensajes">
                         <option value="">-- Seleccione una opción evaluativa --</option>
-                        <option value="DOS_POR_N_MENOS_UNO">Exactamente 2(N - 1) mensajes (N - 1 peticiones en broadcast y N - 1 respuestas de confirmación).</option>
+                        <option value="DOS_POR_N_MENOS_UNO">Exactamente 2(N - 1) mensajes: N - 1 solicitudes enviadas a los demás procesos y N - 1 respuestas.</option>
                         <option value="TRES_POR_N_TOTALES">Exactamente 3N mensajes al requerir etapas de confirmación intermedia antes de liberar el recurso.</option>
                         <option value="LOGARITMO_DE_N">Un orden logarítmico O(log N) mediante el reenlace dinámico de los canales de comunicación virtuales.</option>
                         <option value="N_MENOS_UNO_TOTALES">Solamente N - 1 mensajes al suprimir completamente las respuestas de los nodos no competidores.</option>
@@ -304,8 +305,8 @@
                 <!-- Select 3 -->
                 <div class="select-card" data-qid="q3_ricart_criterio_postergacion">
                     <div class="select-card-header">
-                        <span>3. Protocolo de Ricart y Agrawala:</span>
-                        <span style="font-size: 0.82rem; color: var(--text-muted);">¿Cuándo decide un proceso Pj diferir (postergar) su mensaje de respuesta?</span>
+                        <span>3. Enfoque Distribuido (Segunda versión):</span>
+                        <span style="font-size: 0.82rem; color: var(--text-muted);">¿Cuándo decide un proceso P<sub>j</sub> diferir (postergar) su mensaje de respuesta?</span>
                     </div>
                     <select class="select-box" id="select-q3_ricart_criterio_postergacion">
                         <option value="">-- Seleccione una opción evaluativa --</option>
@@ -334,12 +335,12 @@
                 <!-- Select 5 -->
                 <div class="select-card" data-qid="q5_token_perdida_vulnerabilidad">
                     <div class="select-card-header">
-                        <span>5. Vulnerabilidad Crítica del Token:</span>
-                        <span style="font-size: 0.82rem; color: var(--text-muted);">¿Qué consecuencia produce la pérdida física o lógica del testigo?</span>
+                        <span>5. Vulnerabilidad del Testigo:</span>
+                        <span style="font-size: 0.82rem; color: var(--text-muted);">¿Qué consecuencia produce la pérdida del testigo o falla del nodo que lo posee?</span>
                     </div>
                     <select class="select-box" id="select-q5_token_perdida_vulnerabilidad">
                         <option value="">-- Seleccione una opción evaluativa --</option>
-                        <option value="BLOQUEO_HASTA_REGENERACION_ELECCION">El sistema se bloquea indefinidamente hasta que un algoritmo de elección detecte la pérdida y regenere el testigo.</option>
+                        <option value="BLOQUEO_TEMPORAL_PROTOCOLO_RECUPERACION">El sistema queda bloqueado temporalmente hasta que un protocolo de recuperación detecta la pérdida y genera un nuevo testigo.</option>
                         <option value="DUPLICACION_AUTOMATICA">Los vecinos adyacentes generan de inmediato copias automáticas del testigo sin necesidad de coordinación.</option>
                         <option value="ACCESO_LIBRE_SIN_CONTROL">Todos los procesos acceden concurrentemente al recurso asumiendo que la sección crítica quedó liberada.</option>
                         <option value="MIGRACION_MEMORIA">El kernel transfiere automáticamente el estado del proceso averiado a la memoria de la estación más cercana.</option>
@@ -361,21 +362,22 @@
             </details>
 
             <!-- SIMULADOR 2: Wait-Die vs Wound-Wait -->
+            <div class="sim-guide-callout">💡 <strong>Guía metodológica:</strong> Explore primero el simulador interactivo y luego responda las consignas de la sección.</div>
             <div class="sim-container" style="margin-bottom: 2rem;">
                 <h3 style="font-size: 1.05rem; font-weight: 700; color: var(--primary);">⚖️ Simulador de Conflictos: Esperar-Morir vs. Herir-Esperar</h3>
                 <p style="font-size: 0.85rem; color: var(--text-muted);">
-                    Configure las marcas de tiempo de creación ($T_1$ y $T_2$, donde menor valor significa mayor antigüedad) para evaluar la acción preventiva.
+                    Configure las marcas de tiempo de creación (T<sub>1</sub> y T<sub>2</sub>, donde menor valor significa mayor antigüedad) para evaluar la acción preventiva.
                 </p>
                 <div class="sim-controls-grid">
                     <div class="form-group">
-                        <label>T_solicitante (T_req):</label>
+                        <label>T<sub>solicitante</sub> (T<sub>req</sub>):</label>
                         <select class="form-control" id="sim-treq" onchange="runDeadlockSimulation()">
                             <option value="10">Transacción Vieja (Marca 10)</option>
                             <option value="20" selected>Transacción Joven (Marca 20)</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label>T_poseedor (T_hold):</label>
+                        <label>T<sub>poseedor</sub> (T<sub>hold</sub>):</label>
                         <select class="form-control" id="sim-thold" onchange="runDeadlockSimulation()">
                             <option value="10" selected>Transacción Vieja (Marca 10)</option>
                             <option value="20">Transacción Joven (Marca 20)</option>
@@ -390,7 +392,7 @@
                     </div>
                 </div>
                 <div class="sim-status-card info" id="sim-deadlock-result">
-                    Resultado: Joven (20) solicita a Viejo (10) bajo Wait-Die &rarr; <strong>La transacción joven MUERE</strong> y se reinicia con su marca original.
+                    Resultado: Joven (20) solicita a Vieja (10) bajo Wait-Die &rarr; <strong>La transacción joven MUERE</strong> y se reinicia conservando su marca original.
                 </div>
             </div>
 
@@ -415,16 +417,16 @@
 
                 <!-- SW 3 -->
                 <div class="switch-item" data-qid="sw3_wait_die_viejo_pide_joven">
-                    <div class="switch-title">3. Wait-Die: Transacción Vieja (T_req=10) solicita recurso retenido por Joven (T_hold=20):</div>
+                    <div class="switch-title">3. Wait-Die: Transacción Vieja (T<sub>req</sub> = 10) solicita recurso retenido por Joven (T<sub>hold</sub> = 20):</div>
                     <div class="segmented-control">
-                        <button type="button" class="seg-btn" data-val="VIEJO_ESPERA">Vieja Espera Pacíficamente</button>
+                        <button type="button" class="seg-btn" data-val="VIEJO_ESPERA">Vieja Permanece Bloqueada</button>
                         <button type="button" class="seg-btn" data-val="VIEJO_MUERE">Vieja Muere y Aborta</button>
                     </div>
                 </div>
 
                 <!-- SW 4 -->
                 <div class="switch-item" data-qid="sw4_wait_die_joven_pide_viejo">
-                    <div class="switch-title">4. Wait-Die: Transacción Joven (T_req=20) solicita recurso retenido por Vieja (T_hold=10):</div>
+                    <div class="switch-title">4. Wait-Die: Transacción Joven (T<sub>req</sub> = 20) solicita recurso retenido por Vieja (T<sub>hold</sub> = 10):</div>
                     <div class="segmented-control">
                         <button type="button" class="seg-btn" data-val="JOVEN_ESPERA">Joven Espera en Cola</button>
                         <button type="button" class="seg-btn" data-val="JOVEN_MUERE_REINICIA">Joven Muere y Reinicia</button>
@@ -433,7 +435,7 @@
 
                 <!-- SW 5 -->
                 <div class="switch-item" data-qid="sw5_wound_wait_viejo_pide_joven">
-                    <div class="switch-title">5. Wound-Wait: Transacción Vieja (T_req=10) solicita recurso retenido por Joven (T_hold=20):</div>
+                    <div class="switch-title">5. Wound-Wait: Transacción Vieja (T<sub>req</sub> = 10) solicita recurso retenido por Joven (T<sub>hold</sub> = 20):</div>
                     <div class="segmented-control">
                         <button type="button" class="seg-btn" data-val="VIEJO_HIERE_EXPROPIA_JOVEN">Vieja Hiere y Expropia</button>
                         <button type="button" class="seg-btn" data-val="VIEJO_ESPERA">Vieja Espera a la Joven</button>
@@ -442,7 +444,7 @@
 
                 <!-- SW 6 -->
                 <div class="switch-item" data-qid="sw6_wound_wait_joven_pide_viejo">
-                    <div class="switch-title">6. Wound-Wait: Transacción Joven (T_req=20) solicita recurso retenido por Vieja (T_hold=10):</div>
+                    <div class="switch-title">6. Wound-Wait: Transacción Joven (T<sub>req</sub> = 20) solicita recurso retenido por Vieja (T<sub>hold</sub> = 10):</div>
                     <div class="segmented-control">
                         <button type="button" class="seg-btn" data-val="JOVEN_ESPERA">Joven Espera a la Vieja</button>
                         <button type="button" class="seg-btn" data-val="JOVEN_HIERE">Joven Hiere y Expropia</button>
@@ -464,10 +466,11 @@
             </details>
 
             <!-- SIMULADOR 3: Bully Algorithm -->
+            <div class="sim-guide-callout">💡 <strong>Guía metodológica:</strong> Explore primero el simulador interactivo y luego responda las consignas de la sección.</div>
             <div class="sim-container" style="margin-bottom: 2rem;">
                 <h3 style="font-size: 1.05rem; font-weight: 700; color: var(--primary);">👑 Simulador del Algoritmo Bully (Nodos 1 a 7)</h3>
                 <p style="font-size: 0.85rem; color: var(--text-muted);">
-                    El nodo 7 es el coordinador actual. Simule su caída, convoque una elección desde el nodo 3 y observe la reactivación del matón.
+                    El nodo 7 es el coordinador actual. Simule su caída, convoque una elección desde el nodo 3 y observe el comportamiento cuando el nodo de mayor identificador se reincorpora.
                 </p>
                 <div class="nodes-display-grid" id="bully-nodes-grid">
                     <div class="node-card" id="bnode-1"><span>Nodo 1</span><span class="badge-tag blue">Vivo</span></div>
@@ -481,12 +484,13 @@
                 <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
                     <button class="btn btn-outline" style="font-size: 0.8rem;" onclick="simCrashLeader()">💥 Caída del Líder (Nodo 7)</button>
                     <button class="btn btn-primary" style="font-size: 0.8rem;" onclick="simElectionFromP3()">🚀 Iniciar Elección desde Nodo 3</button>
-                    <button class="btn btn-outline" style="font-size: 0.8rem;" onclick="simReviveLeader()">⚡ Reactivar Nodo 7 (Bully)</button>
+                    <button class="btn btn-outline" style="font-size: 0.8rem;" onclick="simReviveLeader()">⚡ Reincorporar Nodo 7 (Mayor ID)</button>
                     <button class="btn btn-outline" style="font-size: 0.8rem;" onclick="resetBullySim()">🔄 Resetear</button>
                 </div>
                 <div class="sim-log-terminal" id="bully-log">
                     &gt; Topología lista. Nodo 7 activo como Coordinador.
                 </div>
+                <p style="font-size: 0.8rem; color: var(--text-dim); margin-top: 0.5rem;">Nota: La simulación simplifica los intercambios intermedios y muestra la rama principal donde los nodos de mayor ID responden y la elección continúa progresando hacia el nodo de mayor jerarquía.</p>
             </div>
 
             <div class="select-grid">
@@ -498,7 +502,7 @@
                     </div>
                     <select class="select-box" id="select-sim_bully_deteccion_timeout">
                         <option value="">-- Seleccione una opción evaluativa --</option>
-                        <option value="DOS_TP_MAS_TT">2Tp + Tt (Dos veces el tiempo de propagación de red más el tiempo de tratamiento local)</option>
+                        <option value="DOS_TP_MAS_TT">2T<sub>p</sub> + T<sub>t</sub> (Dos veces el tiempo de propagación de red más el tiempo de tratamiento local)</option>
                         <option value="TP_POR_NUMERO_NODOS">Tp * N (El tiempo de propagación multiplicado por el número total de máquinas)</option>
                         <option value="TT_DIVIDIDO_DOS">Tt / 2 (La mitad del tiempo de ejecución del proceso líder en su procesador)</option>
                         <option value="TIEMPO_RTT_EXPONENCIAL">2^(RTT) (Un retardo exponencial basado en la tasa de retransmisión TCP)</option>
@@ -509,7 +513,7 @@
                 <div class="select-card" data-qid="sim_bully_quien_recibe_eleccion">
                     <div class="select-card-header">
                         <span>2. Convocatoria en Bully:</span>
-                        <span style="font-size: 0.82rem; color: var(--text-muted);">¿A qué nodos transmite el mensaje ELECCION el proceso que inicia la elección?</span>
+                        <span style="font-size: 0.82rem; color: var(--text-muted);">¿A qué nodos transmite el mensaje ELECCIÓN el proceso que inicia la elección?</span>
                     </div>
                     <select class="select-box" id="select-sim_bully_quien_recibe_eleccion">
                         <option value="">-- Seleccione una opción evaluativa --</option>
@@ -528,7 +532,7 @@
                     </div>
                     <select class="select-box" id="select-sim_bully_regreso_nodo_alto">
                         <option value="">-- Seleccione una opción evaluativa --</option>
-                        <option value="IMPONE_LIDERAZGO_INMEDIATO">Convoca de inmediato una elección y se impone como nuevo coordinador desplazando al actual.</option>
+                        <option value="IMPONE_LIDERAZGO_INMEDIATO">Inicia de inmediato una nueva elección y resulta coordinador al poseer el identificador más alto.</option>
                         <option value="SUBORDINA_AL_LIDER_ACTUAL">Acepta pacíficamente el liderazgo del coordinador vigente hasta que este falle.</option>
                         <option value="ESPERA_PROXIMO_REINICIO">Permanece en estado de reposo sin participar en mensajes hasta el próximo ciclo programado.</option>
                         <option value="DIVIDE_GRUPO_SUBREDES">Provoca una partición de red asignándose el control de la mitad de los procesos.</option>
@@ -555,7 +559,7 @@
         <!-- SECCIÓN 5: Flujo Secuencial del Algoritmo Bully (Drag & Drop) -->
         <section class="glass-card" id="seccion-5">
             <h2 class="section-title">5️⃣ Secuencia Operativa del Algoritmo Bully (El Matón)</h2>
-            <p class="section-desc">Arrastre las 6 etapas canónicas para ordenar secuencialmente el protocolo de elección de García-Molina.</p>
+            <p class="section-desc">Arrastre las 6 etapas canónicas para ordenar secuencialmente el flujo condicional del protocolo de elección de García-Molina.</p>
 
             <details class="biblio-panel">
                 <summary class="biblio-summary">📖 Dónde estudiar este tema en la bibliografía</summary>
@@ -566,48 +570,7 @@
 
             <div class="dnd-container">
                 <div class="dnd-slots-container" id="dnd-bully-slots">
-                    <div class="dnd-slot" data-index="0">
-                        <span class="slot-index">Etapa 1</span>
-                        <div class="dnd-chip" data-id="1_NODO_DETECTA_FALLO_COORDINADOR_POR_TIMEOUT">
-                            <span>Un nodo detecta caída del coordinador por expiración de temporizador (T &gt; 2Tp + Tt).</span>
-                            <span class="chip-handle">☰</span>
-                        </div>
-                    </div>
-                    <div class="dnd-slot" data-index="1">
-                        <span class="slot-index">Etapa 2</span>
-                        <div class="dnd-chip" data-id="2_ENVIA_MENSAJE_ELECCION_A_NODOS_ID_MAYOR">
-                            <span>El nodo difunde un mensaje de ELECCION únicamente a los nodos con identificador mayor.</span>
-                            <span class="chip-handle">☰</span>
-                        </div>
-                    </div>
-                    <div class="dnd-slot" data-index="2">
-                        <span class="slot-index">Etapa 3</span>
-                        <div class="dnd-chip" data-id="3_SI_RECIBE_OK_CEDE_Y_ESPERA_NUEVO_LIDER">
-                            <span>Si recibe respuesta OK de algún nodo mayor, se inhibe y espera a que este asuma el mando.</span>
-                            <span class="chip-handle">☰</span>
-                        </div>
-                    </div>
-                    <div class="dnd-slot" data-index="3">
-                        <span class="slot-index">Etapa 4</span>
-                        <div class="dnd-chip" data-id="4_SI_EXPIRA_TIMEOUT_SIN_OK_PROCLAMA_LIDERAZGO">
-                            <span>Si expira el timeout sin recibir ningún OK de nodos superiores, se autoproclama nuevo líder.</span>
-                            <span class="chip-handle">☰</span>
-                        </div>
-                    </div>
-                    <div class="dnd-slot" data-index="4">
-                        <span class="slot-index">Etapa 5</span>
-                        <div class="dnd-chip" data-id="5_ENVIA_MENSAJE_COORDINADOR_A_TODOS_LOS_MENORES">
-                            <span>El nuevo líder transmite el mensaje COORDINADOR a todos los nodos con identificador menor.</span>
-                            <span class="chip-handle">☰</span>
-                        </div>
-                    </div>
-                    <div class="dnd-slot" data-index="5">
-                        <span class="slot-index">Etapa 6</span>
-                        <div class="dnd-chip" data-id="6_NODOS_SUBORDINADOS_ACTUALIZAN_TABLA_LIDER">
-                            <span>Los nodos subordinados reciben el anuncio y actualizan su referencia interna de coordinador.</span>
-                            <span class="chip-handle">☰</span>
-                        </div>
-                    </div>
+                    <!-- Los chips se inicializan mezclados dinámicamente desde JavaScript -->
                 </div>
                 <div style="display: flex; justify-content: flex-end;">
                     <button class="btn btn-outline" style="font-size: 0.8rem;" onclick="resetBullyDndOrder()">🔀 Mezclar / Reordenar</button>
@@ -628,6 +591,7 @@
             </details>
 
             <!-- SIMULADOR 4: Calculador de Tolerancia a Fallas Bizantinas -->
+            <div class="sim-guide-callout">💡 <strong>Guía metodológica:</strong> Explore primero el simulador interactivo y luego responda las consignas de la sección.</div>
             <div class="sim-container" style="margin-bottom: 2rem;">
                 <h3 style="font-size: 1.05rem; font-weight: 700; color: var(--primary);">🛡️ Calculador Matemático de Consenso de Lamport</h3>
                 <p style="font-size: 0.85rem; color: var(--text-muted);">
@@ -648,7 +612,7 @@
                     </div>
                 </div>
                 <div class="sim-status-card info" id="byz-math-info">
-                    Para tolerar m = 1 traidor: se necesitan al menos 4 nodos con mensajes orales. Con 3 generales, 1 traidor impide alcanzar consenso.
+                    Para tolerar m = 1 traidor: se necesitan al menos 4 nodos con mensajes orales. Con firmas no falsificables, el algoritmo puede tolerar cualquier cantidad de procesos traidores siempre que exista la cantidad de participantes exigida por el modelo adoptado en la cátedra (n > m + 1).
                 </div>
             </div>
 
@@ -661,7 +625,7 @@
                     </div>
                     <select class="select-box" id="select-q1_fallas_bizantinas_caracteristica">
                         <option value="">-- Seleccione una opción evaluativa --</option>
-                        <option value="COMPORTAMIENTO_ARBITRARIO_O_MALICIOSO">El componente puede enviar respuestas contradictorias, mentiras deliberadas o actuar erráticamente.</option>
+                        <option value="COMPORTAMIENTO_ARBITRARIO_O_MALICIOSO">El componente puede enviar información falsa, inconsistente o contradictoria a distintos procesos.</option>
                         <option value="DETENCION_LIMPIA_INMEDIATA">El proceso interrumpe su ejecución de forma instantánea sin transmitir ningún dato anómalo.</option>
                         <option value="PERDIDA_CONECTIVIDAD_FISICA">La interfaz de red sufre un corte de cable sin alterar la lógica interna de los programas.</option>
                         <option value="RETRASO_SINCRONICO_UNIFORME">Todos los mensajes del nodo sufren un retardo idéntico y predecible de propagación.</option>
@@ -676,7 +640,7 @@
                     </div>
                     <select class="select-box" id="select-q2_condicion_ic1_acuerdo">
                         <option value="">-- Seleccione una opción evaluativa --</option>
-                        <option value="TODOS_LEALES_OBEDECEN_MISMA_ORDEN">Todos los tenientes leales deben obedecer exactamente la misma decisión final (Atacar o Retirarse).</option>
+                        <option value="TODOS_LEALES_OBEDECEN_MISMA_ORDEN">Todos los procesos leales deben adoptar la misma decisión final.</option>
                         <option value="EL_COMANDANTE_DECIDE_UNILATERAL">La orden del comandante se aplica de forma incondicional aunque este sea reconocido como traidor.</option>
                         <option value="MAYORIA_ABSOLUTA_SOBRE_TRAIDORES">La cantidad de generales leales debe duplicar al número de intermediarios en el campo.</option>
                         <option value="CONFIRMACION_POR_TERCEROS">Cada general debe recibir autorización escrita de al menos dos delegados gubernamentales.</option>
@@ -734,13 +698,13 @@
         <section class="glass-card download-footer-card">
             <h2 style="font-size: 1.3rem; font-weight: 700;">📥 Descarga de Archivo de Respuestas</h2>
             <p style="color: var(--text-muted); font-size: 0.9rem; max-width: 600px;">
-                Alcanzado el 100% del progreso académico (31/31 ítems) y completados los datos del alumno, se habilitará la descarga del archivo <code>respuestas_tp07.json</code>.
+                Alcanzado el 100% de los ítems respondidos (26/26 ítems) y completados los datos del alumno, se habilitará la descarga del archivo <code>respuestas_tp07.json</code>.
             </p>
             <button class="btn btn-primary" id="btn-download-bottom" disabled style="padding: 0.8rem 1.75rem; font-size: 1rem;">
                 📥 Descargar respuestas_tp07.json
             </button>
             <div id="download-status-msg" style="font-size: 0.85rem; color: var(--amber); font-weight: 500;">
-                Progreso actual incompleto. Complete todos los ejercicios y sus datos personales.
+                Progreso: 0/26 ítems respondidos. Recuerde ingresar su Nombre y Legajo.
             </div>
         </section>
 
@@ -756,4 +720,3 @@
     <script src="app.js"></script>
 </body>
 </html>
-

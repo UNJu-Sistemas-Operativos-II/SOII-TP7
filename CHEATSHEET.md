@@ -72,7 +72,7 @@ Sea $T_{req}$ la marca de la transacción solicitante y $T_{hold}$ la marca de l
 
 | Escenario | Método Esperar-Morir (Wait-Die) *(No Apropiativo)* | Método Herir-Esperar (Wound-Wait) *(Apropiativo)* |
 | :--- | :--- | :--- |
-| **Viejo pide a Joven**<br>($T_{req} < T_{hold}$) | **ESPERA**<br>(La transacción vieja se bloquea pacíficamente) | **HIERE (WOUND)**<br>(Provoca el aborto de la joven para que libere el recurso) |
+| **Viejo pide a Joven**<br>($T_{req} < T_{hold}$) | **ESPERA**<br>(La transacción vieja permanece bloqueada) | **HIERE (WOUND)**<br>(Provoca el aborto de la joven para que libere el recurso) |
 | **Joven pide a Viejo**<br>($T_{req} > T_{hold}$) | **MUERE (DIE)**<br>(La joven es abortada y se reinicia con su marca original) | **ESPERA**<br>(A la transacción joven se le permite esperar a que la vieja termine) |
 | **Principio Rector** | Una transacción joven no espera por una vieja: aborta y se reinicia conservando su marca original. | Una transacción jamás espera por una más joven: si la vieja requiere el recurso, fuerza el aborto de la joven. |
 
@@ -88,9 +88,9 @@ Asume que cada proceso posee un identificador numérico único conocido por todo
    *(Donde $T_p$ es el tiempo de propagación de red y $T_t$ es el tiempo de tratamiento).*
 2. **Convocatoria:** El nodo envía el mensaje `ELECCION` **únicamente a los nodos con ID mayor al suyo**.
 3. **Respuesta:**
-   - Si ningún nodo responde antes del timeout, el nodo **se autoproclama líder** y transmite `COORDINADOR` a todos los nodos con ID menor.
+   - Si ningún nodo responde antes del timeout, el nodo **se autoproclama líder** y transmite `COORDINADOR` al resto de los nodos activos.
    - Si algún nodo con ID superior responde `OK`, el iniciador se inhibe y espera a que el superior tome el mando.
-4. **Reactivación:** Si un nodo previamente caído con ID muy alto se recupera, convoca inmediatamente a elección e **impone su liderazgo** (de allí el nombre *Bully*).
+4. **Reactivación:** Si un nodo previamente caído con ID muy alto se recupera, convoca inmediatamente a elección y **resulta nuevo coordinador** al tener el identificador más alto.
 
 ### 4.2. Algoritmo de Elección en Anillo (Basado en Recopilación de Identificadores)
 Los nodos están organizados en una topología de **anillo lógico unidireccional**:

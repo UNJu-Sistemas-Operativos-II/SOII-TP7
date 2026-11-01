@@ -114,7 +114,7 @@ Verificando Módulo Web Interactivo (soluciones/respuestas_tp07.json)...
 Abra el archivo `web/index.html` en su navegador (Google Chrome, Firefox o Edge). La interfaz cuenta con:
 
 1. **Datos del Estudiante:** Ingrese su Nombre, Legajo (LU) y usuario de GitHub.
-2. **Sticky Toolbar Superior:** Monitoriza en tiempo real su porcentaje de avance académico ($0\%$ a $100\%$) y la cantidad de ítems resueltos ($0/31$).
+2. **Sticky Toolbar Superior:** Monitoriza en tiempo real su porcentaje de avance académico ($0\%$ a $100\%$) y la cantidad de ítems respondidos ($0/26$).
 3. **Paneles Bibliográficos Desplegables (`📖 Dónde estudiar este tema...`):** En cada sección, consulte los capítulos y diapositivas oficiales recomendados.
 4. **Laboratorios y Simuladores Interactivos:**
    - **Simulador 1 (Relojes de Lamport):** Genere eventos locales y mensajes entre procesos ($P_1, P_2, P_3$) y observe cómo se propagan las marcas de tiempo aplicando $C_j \leftarrow 1 + \max(C_j, T_i)$.
