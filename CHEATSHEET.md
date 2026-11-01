@@ -72,9 +72,9 @@ Sea $T_{req}$ la marca de la transacción solicitante y $T_{hold}$ la marca de l
 
 | Escenario | Método Esperar-Morir (Wait-Die) *(No Apropiativo)* | Método Herir-Esperar (Wound-Wait) *(Apropiativo)* |
 | :--- | :--- | :--- |
-| **Viejo pide a Joven**<br>($T_{req} < T_{hold}$) | **ESPERA**<br>(La transacción vieja se bloquea pacíficamente) | **HIERE (WOUND)**<br>(La vieja expropia el recurso y la joven se cancela) |
-| **Joven pide a Viejo**<br>($T_{req} > T_{hold}$) | **MUERE (DIE)**<br>(La joven es cancelada y se reinicia con su marca original) | **ESPERA**<br>(A la joven se le permite esperar a que la vieja termine) |
-| **Regla Mnemotécnica** | *"Los viejos esperan, los jóvenes mueren"* | *"Los viejos hieren (expropian), los jóvenes esperan"*<br>*(Nunca una transacción espera por una más joven)* |
+| **Viejo pide a Joven**<br>($T_{req} < T_{hold}$) | **ESPERA**<br>(La transacción vieja se bloquea pacíficamente) | **HIERE (WOUND)**<br>(Provoca el aborto de la joven para que libere el recurso) |
+| **Joven pide a Viejo**<br>($T_{req} > T_{hold}$) | **MUERE (DIE)**<br>(La joven es abortada y se reinicia con su marca original) | **ESPERA**<br>(A la transacción joven se le permite esperar a que la vieja termine) |
+| **Principio Rector** | Una transacción joven no espera por una vieja: aborta y se reinicia conservando su marca original. | Una transacción jamás espera por una más joven: si la vieja requiere el recurso, fuerza el aborto de la joven. |
 
 ---
 
@@ -92,7 +92,7 @@ Asume que cada proceso posee un identificador numérico único conocido por todo
    - Si algún nodo con ID superior responde `OK`, el iniciador se inhibe y espera a que el superior tome el mando.
 4. **Reactivación:** Si un nodo previamente caído con ID muy alto se recupera, convoca inmediatamente a elección e **impone su liderazgo** (de allí el nombre *Bully*).
 
-### 4.2. Algoritmo de Elección en Anillo (Chang y Roberts)
+### 4.2. Algoritmo de Elección en Anillo (Basado en Recopilación de Identificadores)
 Los nodos están organizados en una topología de **anillo lógico unidireccional**:
 
 1. El nodo que detecta la caída envía un mensaje `ELECTION` a su vecino activo inmediato, conteniendo su propio ID.
@@ -104,8 +104,9 @@ Los nodos están organizados en una topología de **anillo lógico unidirecciona
 ## 5. 🛡️ Consenso Distribuido y Generales Bizantinos (Lamport, 1982)
 
 ### 5.1. Taxonomía de Fallas
-* **Fallas de Parada (Crash / Fail-Stop):** El nodo se detiene limpiamente; no engaña a los demás ni envía respuestas inconsistentes.
-* **Fallas Bizantinas (Arbitrary / Byzantine):** El nodo actúa de forma errática o maliciosa; puede mentir, enviar datos opuestos a distintos pares o falsificar información.
+* **Fallas por Parada (Crash):** El proceso deja de producir respuestas y se detiene.
+* **Modelo Fail-Stop:** Falla por parada donde, además, los demás procesos pueden detectar de manera confiable que el componente se ha detenido.
+* **Fallas Bizantinas (Arbitrary / Byzantine):** El componente actúa de forma arbitraria o maliciosa; puede mentir, enviar datos opuestos o contradictorios a distintos procesos y alterar información.
 
 ### 5.2. Condiciones de Consistencia de Lamport (Interactive Consistency)
 * **IC1 (Acuerdo):** Todos los tenientes leales deben obedecer **la misma orden**.
@@ -135,3 +136,4 @@ chmod +x test.sh autograder_tp07.py
 # 3. Evaluar directamente con Python informando feedback
 python3 autograder_tp07.py soluciones/respuestas_tp07.json --rubric rubric_tp07.json
 ```
+

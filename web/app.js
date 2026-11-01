@@ -679,3 +679,4 @@ document.addEventListener('DOMContentLoaded', () => {
     renderDndSlotsFromState();
     updateProgressUI();
 });
+

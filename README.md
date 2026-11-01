@@ -208,3 +208,4 @@ El flujo de GitHub Actions ejecutará automáticamente la verificación en la nu
 | **Interbloqueo Distribuido** | U7: Slides 23–29 | Cap. 18 (Secc. 18.3) | Cap. 11 (Secc. 11.4) | Cap. 6 (Sistemas Distribuidos) | Cap. 14 |
 | **Algoritmos de Elección (Bully y Anillo)** | U7: Slides 30–36 | Cap. 18 (Secc. 18.5) | Cap. 11 (Secc. 11.5) | Cap. 6 (Sistemas Distribuidos) | Cap. 14 |
 | **Consenso y Generales Bizantinos** | U7: Slides 37–44 | Cap. 18 (Secc. 18.6) | Cap. 11 (Secc. 11.6) | Cap. 8 (Tolerancia a Fallas) | Cap. 14 |
+
