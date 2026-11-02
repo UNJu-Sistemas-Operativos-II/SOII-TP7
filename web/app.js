@@ -7,26 +7,24 @@
  */
 
 document.addEventListener('DOMContentLoaded', () => {
-    const STORAGE_KEY = 'UNJU_SO2_TP7_STATE_V2';
+    const STORAGE_KEY = 'UNJU_SO2_TP7_STATE_V3';
     const TOTAL_ACADEMIC_ITEMS = 26;
 
-    // Etapas canónicas del Algoritmo Bully (Flujo Condicional con Ramas A y B)
+    // Etapas canónicas del Algoritmo Bully (5 etapas con tarjeta de decisión condicional)
     const bullyStagesDesc = {
-        '1_DETECTA_FALLA_COORDINADOR_POR_TIMEOUT': '1. Un nodo detecta la falla del coordinador por expiración de temporizador (T > 2Tp + Tt).',
-        '2_ENVIA_MENSAJE_ELECCION_A_NODOS_ID_MAYOR': '2. Envía un mensaje de ELECCIÓN únicamente a los nodos con identificador superior.',
-        '3_ESPERA_RESPUESTAS_EVALUA_SI_RECIBE_OK': '3. Espera respuestas durante el tiempo límite: evalúa si recibe algún mensaje OK.',
-        '4_RAMA_SI_RECIBE_OK_DEJA_DE_COMPETIR_Y_ESPERA': '4. Rama A: Si recibe OK de un nodo mayor, deja de competir y espera el anuncio del nuevo coordinador.',
-        '5_RAMA_SI_NO_RECIBE_OK_PROCLAMA_COORDINADOR': '5. Rama B: Si expira el temporizador sin recibir ningún OK, se proclama coordinador.',
-        '6_COMUNICA_NUEVO_COORDINADOR_RESTO_NODOS_ACTIVOS': '6. El nuevo líder envía el mensaje COORDINADOR al resto de los nodos activos.'
+        '1_DETECTA_FALLA_POR_UMBRAL_TIMEOUT': '1. Un nodo detecta la falla del coordinador cuando el tiempo de respuesta supera el umbral 2Tp + Tt.',
+        '2_ENVIA_ELECCION_A_NODOS_ID_MAYOR': '2. Envía un mensaje de ELECCIÓN únicamente a los nodos con identificador superior.',
+        '3_ESPERA_RESPUESTAS_DURANTE_TEMPORIZADOR': '3. Espera respuestas durante el tiempo límite establecido.',
+        '4_DECISION_CONDICIONAL_BIFURCACION': '4. Decisión condicional: Si recibe OK, deja de competir y espera el mensaje COORDINADOR. Si no recibe ningún OK, se proclama coordinador.',
+        '5_COMUNICA_NUEVO_COORDINADOR_RESTO_ACTIVOS': '5. El nuevo coordinador electo comunica el mensaje COORDINADOR al resto de los nodos activos.'
     };
 
     const INITIAL_SHUFFLED_BULLY_STAGES = [
-        '3_ESPERA_RESPUESTAS_EVALUA_SI_RECIBE_OK',
-        '1_DETECTA_FALLA_COORDINADOR_POR_TIMEOUT',
-        '6_COMUNICA_NUEVO_COORDINADOR_RESTO_NODOS_ACTIVOS',
-        '2_ENVIA_MENSAJE_ELECCION_A_NODOS_ID_MAYOR',
-        '5_RAMA_SI_NO_RECIBE_OK_PROCLAMA_COORDINADOR',
-        '4_RAMA_SI_RECIBE_OK_DEJA_DE_COMPETIR_Y_ESPERA'
+        '3_ESPERA_RESPUESTAS_DURANTE_TEMPORIZADOR',
+        '1_DETECTA_FALLA_POR_UMBRAL_TIMEOUT',
+        '5_COMUNICA_NUEVO_COORDINADOR_RESTO_ACTIVOS',
+        '2_ENVIA_ELECCION_A_NODOS_ID_MAYOR',
+        '4_DECISION_CONDICIONAL_BIFURCACION'
     ];
 
     // Estado Reactivo de la Aplicación (6 Secciones Académicas, 26 Ítems)
@@ -66,7 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
         },
         seccion5_secuencia_algoritmos: {
             orden_algoritmo_bully: [...INITIAL_SHUFFLED_BULLY_STAGES],
-            interacted: false
+            confirmado: false
         },
         seccion6_consenso_bizantino: {
             q1_fallas_bizantinas_caracteristica: null,
@@ -145,8 +143,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (state.seccion4_algoritmos_eleccion[k]) count++;
         }
 
-        // Sección 5: 1 ítem académico (completado cuando el alumno interactúa y ordena)
-        if (state.seccion5_secuencia_algoritmos.interacted) {
+        // Sección 5: 1 ítem académico (completado solo cuando el alumno confirma explícitamente su propuesta)
+        if (state.seccion5_secuencia_algoritmos.confirmado) {
             count += 1;
         }
 
@@ -191,6 +189,22 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    function updateBullyConfirmUI() {
+        const statusEl = document.getElementById('bully-confirm-status');
+        const btn = document.getElementById('btn-confirm-bully');
+        if (!statusEl || !btn) return;
+
+        if (state.seccion5_secuencia_algoritmos.confirmado) {
+            statusEl.innerHTML = '<span class="badge-tag emerald">✓ Respuesta confirmada</span>';
+            btn.className = 'btn btn-outline';
+            btn.textContent = '✓ Confirmado (Volver a Guardar)';
+        } else {
+            statusEl.innerHTML = '<span class="badge-tag amber">⚠️ Secuencia sin confirmar</span>';
+            btn.className = 'btn btn-primary';
+            btn.textContent = '💾 Confirmar respuesta';
+        }
+    }
+
     // --------------------------------------------------------------------------
     // 4. Persistencia en LocalStorage
     // --------------------------------------------------------------------------
@@ -217,8 +231,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (Array.isArray(parsed.seccion5_secuencia_algoritmos.orden_algoritmo_bully)) {
                         state.seccion5_secuencia_algoritmos.orden_algoritmo_bully = parsed.seccion5_secuencia_algoritmos.orden_algoritmo_bully;
                     }
-                    if (typeof parsed.seccion5_secuencia_algoritmos.interacted === 'boolean') {
-                        state.seccion5_secuencia_algoritmos.interacted = parsed.seccion5_secuencia_algoritmos.interacted;
+                    if (typeof parsed.seccion5_secuencia_algoritmos.confirmado === 'boolean') {
+                        state.seccion5_secuencia_algoritmos.confirmado = parsed.seccion5_secuencia_algoritmos.confirmado;
                     }
                 }
                 Object.assign(state.seccion6_consenso_bizantino, parsed.seccion6_consenso_bizantino || {});
@@ -273,6 +287,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Sección 5: Drag & Drop slots
         renderDndSlotsFromState();
+        updateBullyConfirmUI();
 
         // Sección 6: Selects
         for (const [qid, val] of Object.entries(state.seccion6_consenso_bizantino)) {
@@ -356,7 +371,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // --------------------------------------------------------------------------
-    // 6. Drag & Drop - Sección 5 (Algoritmo Bully)
+    // 6. Drag & Drop - Sección 5 (Algoritmo Bully - 5 Etapas)
     // --------------------------------------------------------------------------
     function renderDndSlotsFromState() {
         const container = document.getElementById('dnd-bully-slots');
@@ -410,7 +425,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         if (badge) badge.textContent = `Etapa ${idx + 1}`;
                     });
                     state.seccion5_secuencia_algoritmos.orden_algoritmo_bully = newOrder;
-                    state.seccion5_secuencia_algoritmos.interacted = true;
+                    // Al mover, desmarca confirmación para obligar al alumno a confirmar voluntariamente
+                    state.seccion5_secuencia_algoritmos.confirmado = false;
+                    updateBullyConfirmUI();
                     saveState();
                     updateProgressUI();
                 }
@@ -419,15 +436,24 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     window.resetBullyDndOrder = function() {
-        // Mezclar alternando elementos
         const current = [...state.seccion5_secuencia_algoritmos.orden_algoritmo_bully];
         current.reverse();
         state.seccion5_secuencia_algoritmos.orden_algoritmo_bully = current;
-        state.seccion5_secuencia_algoritmos.interacted = true;
+        // Mezclar NUNCA marca la actividad como respondida
+        state.seccion5_secuencia_algoritmos.confirmado = false;
         renderDndSlotsFromState();
+        updateBullyConfirmUI();
         saveState();
         updateProgressUI();
-        showToast('Etapas reorganizadas. Arrastre las tarjetas para colocarlas en orden secuencial.', 'info');
+        showToast('Etapas reorganizadas. Arrastre las tarjetas y pulse "Confirmar respuesta".', 'info');
+    };
+
+    window.confirmBullyDndOrder = function() {
+        state.seccion5_secuencia_algoritmos.confirmado = true;
+        updateBullyConfirmUI();
+        saveState();
+        updateProgressUI();
+        showToast('Secuencia confirmada y registrada para la entrega.', 'success');
     };
 
     // --------------------------------------------------------------------------
@@ -516,12 +542,16 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // --------------------------------------------------------------------------
-    // 9. Simulador 3: Bully Algorithm
+    // 9. Simulador 3: Bully Algorithm (con validaciones de estado robustas)
     // --------------------------------------------------------------------------
     let bullyCoordinator = 7;
     let node7Alive = true;
 
     window.simCrashLeader = function() {
+        if (!node7Alive) {
+            showToast('El coordinador Nodo 7 ya se encuentra caído.', 'info');
+            return;
+        }
         node7Alive = false;
         const n7 = document.getElementById('bnode-7');
         n7.className = 'node-card failed';
@@ -535,7 +565,11 @@ document.addEventListener('DOMContentLoaded', () => {
             showToast('El Nodo 7 continúa activo como líder. Debe simular su caída primero.', 'info');
             return;
         }
-        logBully('Nodo 3 detecta timeout (T > 2Tp + Tt) y convoca ELECCIÓN a nodos superiores (4, 5, 6, 7).');
+        if (bullyCoordinator === 6) {
+            showToast('La elección ya se completó: el Nodo 6 ya es el coordinador activo.', 'info');
+            return;
+        }
+        logBully('Nodo 3 detecta que el tiempo de respuesta supera el umbral 2Tp + Tt y convoca ELECCIÓN a nodos superiores (4, 5, 6, 7).');
         logBully('Nodos 4, 5 y 6 responden OK al Nodo 3. El Nodo 3 deja de competir y espera.');
         logBully('Nota: Los nodos 4 y 5 inician sus respectivas elecciones; la simulación sigue la rama principal conducida por el Nodo 6.');
         logBully('Nodo 6 convoca ELECCIÓN al Nodo 7. El Nodo 7 no responde.');
@@ -552,7 +586,13 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     window.simReviveLeader = function() {
+        if (node7Alive) {
+            showToast('El Nodo 7 ya se encuentra activo como líder.', 'info');
+            return;
+        }
         node7Alive = true;
+        bullyCoordinator = 7;
+
         const n7 = document.getElementById('bnode-7');
         n7.className = 'node-card active';
         n7.innerHTML = '<span>Nodo 7</span><span class="badge-tag emerald">Líder</span>';
@@ -590,7 +630,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --------------------------------------------------------------------------
-    // 10. Simulador 4: Consenso y Generales Bizantinos
+    // 10. Simulador 4: Límites del modelo presentado en cátedra (Bizantinos)
     // --------------------------------------------------------------------------
     window.calculateByzantineLimits = function() {
         const m = parseInt(document.getElementById('byz-m-input').value, 10) || 1;
@@ -601,7 +641,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('byz-signed-result').value = `${minSigned} nodos (n > m + 1)`;
 
         const info = document.getElementById('byz-math-info');
-        info.innerHTML = `Para tolerar <strong>m = ${m}</strong> traidores: se requieren al menos <strong>${minOral} generales</strong> bajo Mensajes Orales (n > 3m). Con firmas no falsificables, el algoritmo tolera cualquier cantidad de procesos traidores siempre que exista la cantidad exigida por el modelo de cátedra (<strong>${minSigned} generales</strong>, n > m + 1).`;
+        info.innerHTML = `Para tolerar <strong>m = ${m}</strong> traidores: se requieren al menos <strong>${minOral} generales</strong> bajo Mensajes Orales (n > 3m). Con firmas no falsificables, el modelo adoptado en cátedra requiere <strong>${minSigned} generales</strong> (n > m + 1).`;
     };
 
     // --------------------------------------------------------------------------
@@ -669,7 +709,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (imported.seccion4_algoritmos_eleccion) Object.assign(state.seccion4_algoritmos_eleccion, imported.seccion4_algoritmos_eleccion);
                 if (imported.seccion5_secuencia_algoritmos && Array.isArray(imported.seccion5_secuencia_algoritmos.orden_algoritmo_bully)) {
                     state.seccion5_secuencia_algoritmos.orden_algoritmo_bully = imported.seccion5_secuencia_algoritmos.orden_algoritmo_bully;
-                    state.seccion5_secuencia_algoritmos.interacted = true;
+                    state.seccion5_secuencia_algoritmos.confirmado = true;
                 }
                 if (imported.seccion6_consenso_bizantino) Object.assign(state.seccion6_consenso_bizantino, imported.seccion6_consenso_bizantino);
 
@@ -689,5 +729,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // --------------------------------------------------------------------------
     loadState();
     renderDndSlotsFromState();
+    updateBullyConfirmUI();
     updateProgressUI();
 });

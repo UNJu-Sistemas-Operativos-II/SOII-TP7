@@ -295,7 +295,7 @@
                     </div>
                     <select class="select-box" id="select-q2_ricart_agrawala_mensajes">
                         <option value="">-- Seleccione una opción evaluativa --</option>
-                        <option value="DOS_POR_N_MENOS_UNO">Exactamente 2(N - 1) mensajes: N - 1 solicitudes enviadas a los demás procesos y N - 1 respuestas.</option>
+                        <option value="DOS_POR_N_MENOS_UNO">En una ejecución normal, sin fallas ni retransmisiones, genera 2(N - 1) mensajes: N - 1 solicitudes y N - 1 respuestas.</option>
                         <option value="TRES_POR_N_TOTALES">Exactamente 3N mensajes al requerir etapas de confirmación intermedia antes de liberar el recurso.</option>
                         <option value="LOGARITMO_DE_N">Un orden logarítmico O(log N) mediante el reenlace dinámico de los canales de comunicación virtuales.</option>
                         <option value="N_MENOS_UNO_TOTALES">Solamente N - 1 mensajes al suprimir completamente las respuestas de los nodos no competidores.</option>
@@ -310,7 +310,7 @@
                     </div>
                     <select class="select-box" id="select-q3_ricart_criterio_postergacion">
                         <option value="">-- Seleccione una opción evaluativa --</option>
-                        <option value="PETICION_LOCAL_TIENE_MENOR_MARCA">Si Pj está en su SC o si está compitiendo y su propia petición posee una marca de tiempo menor que la de Pi.</option>
+                        <option value="PETICION_LOCAL_TIENE_MENOR_MARCA">Si P<sub>j</sub> está en su sección crítica o, estando también en competencia, su petición tiene prioridad según el par ordenado (T<sub>j</sub>, j) frente a (T<sub>i</sub>, i).</option>
                         <option value="CANAL_RED_SATURADO">Si los buffers del socket TCP reportan congestión temporal en el controlador de interfaz de red.</option>
                         <option value="IDENTIFICADOR_MENOR">Si el identificador numérico de Pj es impar y el nodo emisor pertenece a una subred remota diferente.</option>
                         <option value="DESCONOCIMIENTO_ESTADO">Si Pj todavía no ha recibido la notificación de inicio de sesión por parte del demonio de transporte.</option>
@@ -325,7 +325,7 @@
                     </div>
                     <select class="select-box" id="select-q4_token_anillo_ventaja">
                         <option value="">-- Seleccione una opción evaluativa --</option>
-                        <option value="LIBRE_INANICION_CARGA_EQUITATIVA">Garantizan ausencia total de inanición al circular el testigo secuencialmente entre todos los nodos.</option>
+                        <option value="LIBRE_INANICION_CARGA_EQUITATIVA">En condiciones normales de funcionamiento y con circulación ordenada del testigo, reduce o evita la inanición y distribuye equitativamente las oportunidades de acceso.</option>
                         <option value="INMUNIDAD_CAIDA_NODOS">Siguen funcionando de manera transparente e ininterrumpida si cualquier nodo del anillo colapsa.</option>
                         <option value="CERO_MENSAJES_TRAFICO">No generan ningún consumo de paquetes de red cuando ningún proceso demanda acceso al recurso crítico.</option>
                         <option value="MULTIPLE_ENTRADA_CONCURRENTE">Permiten que dos o más procesos ingresen simultáneamente dividiendo el testigo en fracciones.</option>
@@ -408,7 +408,7 @@
 
                 <!-- SW 2 -->
                 <div class="switch-item" data-qid="sw2_sondas_chandy_misra">
-                    <div class="switch-title">2. Condición de Interbloqueo en Detección por Sondas (Chandy-Misra-Haas):</div>
+                    <div class="switch-title">2. En el esquema de detección por sondas presentado en cátedra, ¿qué situación permite detectar un ciclo de espera?</div>
                     <div class="segmented-control">
                         <button type="button" class="seg-btn" data-val="CICLO_RETORNA_AL_INICIADOR">Sonda Regresa al Iniciador</button>
                         <button type="button" class="seg-btn" data-val="TIEMPO_VIDA_SONDA_EXPIRADO">Expiración de TTL en Red</button>
@@ -497,12 +497,12 @@
                 <!-- Select 1 -->
                 <div class="select-card" data-qid="sim_bully_deteccion_timeout">
                     <div class="select-card-header">
-                        <span>1. Timeout de Detección en Bully:</span>
-                        <span style="font-size: 0.82rem; color: var(--text-muted);">¿Qué fórmula define el tiempo de espera mínimo para declarar caído al líder?</span>
+                        <span>1. Detección de Falla en Bully:</span>
+                        <span style="font-size: 0.82rem; color: var(--text-muted);">¿Qué condición permite considerar que un nodo no respondió dentro del tiempo esperado?</span>
                     </div>
                     <select class="select-box" id="select-sim_bully_deteccion_timeout">
                         <option value="">-- Seleccione una opción evaluativa --</option>
-                        <option value="DOS_TP_MAS_TT">2T<sub>p</sub> + T<sub>t</sub> (Dos veces el tiempo de propagación de red más el tiempo de tratamiento local)</option>
+                        <option value="DOS_TP_MAS_TT">Cuando el tiempo de respuesta supera el umbral 2T<sub>p</sub> + T<sub>t</sub>.</option>
                         <option value="TP_POR_NUMERO_NODOS">Tp * N (El tiempo de propagación multiplicado por el número total de máquinas)</option>
                         <option value="TT_DIVIDIDO_DOS">Tt / 2 (La mitad del tiempo de ejecución del proceso líder en su procesador)</option>
                         <option value="TIEMPO_RTT_EXPONENCIAL">2^(RTT) (Un retardo exponencial basado en la tasa de retransmisión TCP)</option>
@@ -559,7 +559,7 @@
         <!-- SECCIÓN 5: Flujo Secuencial del Algoritmo Bully (Drag & Drop) -->
         <section class="glass-card" id="seccion-5">
             <h2 class="section-title">5️⃣ Secuencia Operativa del Algoritmo Bully (El Matón)</h2>
-            <p class="section-desc">Arrastre las 6 etapas canónicas para ordenar secuencialmente el flujo condicional del protocolo de elección de García-Molina.</p>
+            <p class="section-desc">Arrastre las 5 etapas canónicas para ordenar secuencialmente el protocolo de elección de García-Molina, incluyendo la tarjeta de decisión condicional.</p>
 
             <details class="biblio-panel">
                 <summary class="biblio-summary">📖 Dónde estudiar este tema en la bibliografía</summary>
@@ -570,10 +570,16 @@
 
             <div class="dnd-container">
                 <div class="dnd-slots-container" id="dnd-bully-slots">
-                    <!-- Los chips se inicializan mezclados dinámicamente desde JavaScript -->
+                    <!-- Los chips de 5 posiciones se inicializan mezclados dinámicamente desde JavaScript -->
                 </div>
-                <div style="display: flex; justify-content: flex-end;">
-                    <button class="btn btn-outline" style="font-size: 0.8rem;" onclick="resetBullyDndOrder()">🔀 Mezclar / Reordenar</button>
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
+                    <div id="bully-confirm-status" style="font-size: 0.84rem; font-weight: 500;">
+                        <!-- Badge de estado de confirmación -->
+                    </div>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button class="btn btn-outline" style="font-size: 0.8rem;" onclick="resetBullyDndOrder()">🔀 Mezclar / Reordenar</button>
+                        <button class="btn btn-primary" id="btn-confirm-bully" style="font-size: 0.8rem;" onclick="confirmBullyDndOrder()">💾 Confirmar respuesta</button>
+                    </div>
                 </div>
             </div>
         </section>
@@ -593,7 +599,7 @@
             <!-- SIMULADOR 4: Calculador de Tolerancia a Fallas Bizantinas -->
             <div class="sim-guide-callout">💡 <strong>Guía metodológica:</strong> Explore primero el simulador interactivo y luego responda las consignas de la sección.</div>
             <div class="sim-container" style="margin-bottom: 2rem;">
-                <h3 style="font-size: 1.05rem; font-weight: 700; color: var(--primary);">🛡️ Calculador Matemático de Consenso de Lamport</h3>
+                <h3 style="font-size: 1.05rem; font-weight: 700; color: var(--primary);">🛡️ Calculador de límites del modelo presentado en cátedra</h3>
                 <p style="font-size: 0.85rem; color: var(--text-muted);">
                     Ingrese el número de generales traidores (m) para calcular la cantidad mínima de nodos requerida bajo ambos modelos:
                 </p>
@@ -680,12 +686,12 @@
                 <!-- Select 5 -->
                 <div class="select-card" data-qid="q5_mensajes_firmados_limite_m1">
                     <div class="select-card-header">
-                        <span>5. Límite Teórico con Mensajes Firmados (SM):</span>
-                        <span style="font-size: 0.82rem; color: var(--text-muted);">¿Cuántos nodos totales se requieren para tolerar m = 1 traidor con firmas infalsificables?</span>
+                        <span>5. Modelo con Mensajes Firmados (SM):</span>
+                        <span style="font-size: 0.82rem; color: var(--text-muted);">Según el modelo de mensajes firmados presentado en la teoría de cátedra, ¿cuántos nodos totales se consideran necesarios para tolerar m = 1 traidor?</span>
                     </div>
                     <select class="select-box" id="select-q5_mensajes_firmados_limite_m1">
                         <option value="">-- Seleccione una opción evaluativa --</option>
-                        <option value="MINIMO_3_NODOS_N_MAYOR_M_MAS_1">Únicamente 3 nodos (la cota se reduce a n &gt; m + 1 al ser imposible alterar mensajes firmados).</option>
+                        <option value="MINIMO_3_NODOS_N_MAYOR_M_MAS_1">Tres nodos, aplicando la condición n &gt; m + 1 adoptada en el material de cátedra.</option>
                         <option value="MINIMO_5_NODOS_CRIPTO">Al menos 5 nodos para garantizar la distribución de claves públicas entre los tenientes.</option>
                         <option value="MINIMO_1_NODO_AUTONOMO">Un solo nodo porque las firmas permiten verificar la verdad sin consultar a otros generales.</option>
                         <option value="MINIMO_4_NODOS_IGUAL_ORAL">Exactamente 4 nodos porque la criptografía no altera las restricciones matemáticas de quórum.</option>

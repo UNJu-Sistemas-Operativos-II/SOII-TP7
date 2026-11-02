@@ -61,12 +61,11 @@
       "feedback": "Consultar Diapositivas Unidad 7 (Slides 32-34) y Tanenbaum Cap. 6 sobre la secuencia canónica del Algoritmo Bully (García-Molina).",
       "hashes": {
         "items": [
-          "f08e6ca0b41df89a070980673c8ac8ab2ddb38746c1fa238b75a4daa06214406",
-          "f871627035c36fa0381dacaf6466cdbf300f18c5ee06777cfe1e061c5c1f8816",
-          "07028d4f69caf51a4eaecc1e20e0a8bb91eb9dcfb8a38b86188c0bfc86267eb8",
-          "94f5f45c2bcb7f6c0907f8ea3491e5fccb5341823c7c1db8652b7bc4baa0d27c",
-          "1c0a7dea734d8c9e1fbd5866f478867c81df3512b521ccefe4cfc6d016e019e7",
-          "9a375fe5ba6c6de80944fc709b9de0cfa4f669e2cf25ba4f6f2cefb587bca67d"
+          "5c4efe4bb0037169efef063169794f1f3e50667110251bc7058baa9be0184de2",
+          "7363a4ac1f085c13ab1feea12e9bf09d4e06aae09da02ef7b798581737e921e9",
+          "821230920a3d617d102a3949f533c577c4daa0f77f7a2ae335b655445837cbaa",
+          "c5e47d759bf6917aff5d356bb58df0dc4f9b2a4594e2ad56139a03bd965a7212",
+          "5548416b1104f127c5ee9d25c1fe81b5fa48f1219d7714a8c5b77879ce8f629d"
         ]
       },
       "type": "ordered_list",

@@ -40,7 +40,7 @@ $$x \text{ precede a } y \iff (T_i < T_j) \lor (T_i = T_j \land i < j)$$
 | **Retardo previo a entrar** | 2 mensajes (Req $\to$ Grant) | 2 mensajes (Broadcast Req $\to$ Replies) | 0 a $N - 1$ saltos en el anillo |
 | **Punto Único de Fallo (SPOF)** | **Sí** (Si cae el líder, se bloquea) | **No** (Sin embargo, si 1 nodo cae sin timeout, bloquea) | **Sí** (Pérdida de token o caída del poseedor) |
 | **Cuello de Botella** | **Sí** (En el nodo coordinador) | **No** (Distribuido equitativamente) | **No** (Paso ordenado circular) |
-| **Riesgo de Inanición** | No (Cola FIFO ordenada) | No (Ordenado por marcas de Lamport) | No (Circulación periódica del token) |
+| **Riesgo de Inanición** | No (Cola FIFO ordenada) | No (Ordenado por marcas de Lamport) | Reducido o nulo en operación normal y con circulación ordenada |
 
 ### Algoritmo de Ricart y Agrawala (Procedimiento):
 1. $P_i$ quiere entrar a SC: asigna marca $T_i = C_i$, difunde `(Peticion, Ti, i)` a todos los demás y se añade a su cola local.
@@ -83,13 +83,13 @@ Sea $T_{req}$ la marca de la transacción solicitante y $T_{hold}$ la marca de l
 ### 4.1. Algoritmo de Imposición (Bully Algorithm - García-Molina)
 Asume que cada proceso posee un identificador numérico único conocido por todos. El nodo con el **mayor ID** debe ser el líder:
 
-1. **Detección de Caída:** Un nodo detecta que el coordinador no responde tras un tiempo límite:
-   $$T_{timeout} > 2T_p + T_t$$
+1. **Detección de Caída:** Un nodo detecta que el tiempo de respuesta supera el umbral límite:
+   $$T_{\text{respuesta}} > 2T_p + T_t$$
    *(Donde $T_p$ es el tiempo de propagación de red y $T_t$ es el tiempo de tratamiento).*
 2. **Convocatoria:** El nodo envía el mensaje `ELECCION` **únicamente a los nodos con ID mayor al suyo**.
-3. **Respuesta:**
-   - Si ningún nodo responde antes del timeout, el nodo **se autoproclama líder** y transmite `COORDINADOR` al resto de los nodos activos.
-   - Si algún nodo con ID superior responde `OK`, el iniciador se inhibe y espera a que el superior tome el mando.
+3. **Decisión Condicional:**
+   - Si algún nodo con ID superior responde `OK`, el iniciador deja de competir y espera el anuncio del nuevo coordinador.
+   - Si ningún nodo responde antes del timeout ($T_{\text{respuesta}} > 2T_p + T_t$), el nodo **se proclama coordinador** y transmite `COORDINADOR` al resto de los nodos activos.
 4. **Reactivación:** Si un nodo previamente caído con ID muy alto se recupera, convoca inmediatamente a elección y **resulta nuevo coordinador** al tener el identificador más alto.
 
 ### 4.2. Algoritmo de Elección en Anillo (Basado en Recopilación de Identificadores)
